@@ -1,0 +1,30 @@
+++++SIMILAR_BRANCHES
+CWE122_Heap_Based_Buffer_Overflow__c_CWE129_rand_12.c
+
+++UNUSED_VALUE.PARAM_ASSIGN
+CWE122_Heap_Based_Buffer_Overflow__c_CWE193_char_loop_61b.c
+
+BUFFER_SHIFT вместе с BUFFER_SIZE_MISMATCH и тд.
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_declare_memcpy_01.c mismatch
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_declare_loop_01.c shift
+++ CWE121_Stack_Based_Buffer_Overflow__CWE805_char_declare_loop_01.c dynamic
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_alloca_loop_01.c dynamic
+
+DEREF_OF_NULL_EX
+CWE121_Stack_Based_Buffer_Overflow__CWE131_memcpy_05.c
+
+++++BUFFER_OVERFLOW_STRING
+-CWE121_Stack_Based_Buffer_Overflow__CWE806_char_alloca_ncat_83a.cpp
++CWE121_Stack_Based_Buffer_Overflow__CWE806_char_alloca_ncat_67a.c
+
+UNINIT_LOCAL_VAR
+CWE121_Stack_Based_Buffer_Overflow__CWE193_char_alloca_cpy_05.c
+
+STRING_OVERFLOW ?
+CWE121_Stack_Based_Buffer_Overflow__src_char_alloca_cat_05.c
+CWE121_Stack_Based_Buffer_Overflow__src_char_alloca_cat_04.c
+
+HANDLE_LEAK_EXCEPTION
+ANY
+
+
