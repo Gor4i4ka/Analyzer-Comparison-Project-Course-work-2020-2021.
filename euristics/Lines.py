@@ -1,21 +1,24 @@
 import numpy as np
 
 from allLibs import *
+from projectLib.Common import srch_list_ind
+import projectLib.Comparison as cmp
 
 
 def lines(analyzer1_info, analyzer2_info, eur_params):
     analyzer1_info_field = analyzer1_info.info
     analyzer2_info_field = analyzer2_info.info
-    result_comparison = Comparison()
 
-    result_comparison.name_catalog1 = [warn[0] for warn in count_warnings(analyzer1_info_field)]
-    result_comparison.name_catalog2 = [warn[0] for warn in count_warnings(analyzer2_info_field)]
+    result_comparison = cmp.Comparison()
 
-    result_comparison.name_catalog1.append("ONLY_IN_ANALYZER2")
-    result_comparison.name_catalog1.append("TOTAL_AMOUNT_AN2")
+    result_comparison.name_catalog_an1 = [warn[0] for warn in analyzer1_info.count_warnings()]
+    result_comparison.name_catalog_an2 = [warn[0] for warn in analyzer2_info.count_warnings()]
 
-    result_comparison.name_catalog2.append("ONLY_IN_ANALYZER1")
-    result_comparison.name_catalog2.append("TOTAL_AMOUNT_AN1")
+    result_comparison.name_catalog_an1.append("ONLY_IN_ANALYZER2")
+    result_comparison.name_catalog_an1.append("TOTAL_AMOUNT_AN2")
+
+    result_comparison.name_catalog_an2.append("ONLY_IN_ANALYZER1")
+    result_comparison.name_catalog_an2.append("TOTAL_AMOUNT_AN1")
 
     result_comparison.stat_matrix = np.zeros((len(result_comparison.name_catalog_an1), 
                                               len(result_comparison.name_catalog_an2)), 
@@ -37,7 +40,6 @@ def lines(analyzer1_info, analyzer2_info, eur_params):
         found_counterpart_an1 = False
 
         for err_ind in range(len(analyzer1_info_field[defect1_file_ind][2])):
-            # print([srch_ind(name_catalog1, [analyzer1_info[defect1_file_ind][2][err_ind]])])
             result_comparison.stat_matrix[srch_list_ind(result_comparison.name_catalog_an1,
                                                         analyzer1_info_field[defect1_file_ind][2][err_ind])][-1] += 1
 
@@ -54,9 +56,7 @@ def lines(analyzer1_info, analyzer2_info, eur_params):
                 break
 
         if not found_counterpart_an1:
-            #print(analyzer1_info[defect1_file_ind][2])
             for err_ind in range(len(analyzer1_info_field[defect1_file_ind][2])):
-                #print([srch_ind(name_catalog1, [analyzer1_info[defect1_file_ind][2][err_ind]])])
                 result_comparison.stat_matrix[srch_list_ind(result_comparison.name_catalog_an1,
                                                             analyzer1_info_field[defect1_file_ind][2][err_ind])][-2] += 1
                 result_comparison.error_list_an1.append([analyzer1_info_field[defect1_file_ind][0],
@@ -98,7 +98,6 @@ def lines(analyzer1_info, analyzer2_info, eur_params):
                     if intersection_found:
                         break
 
-                #intersection = [value for value in file[1][defect1_lines_ind] if value in file[2][defect2_lines_ind]]
                 if intersection_found:
                     present_in_an1_ar[defect2_lines_ind] = True
                     error_name2 = file[4][defect2_lines_ind]
@@ -106,7 +105,8 @@ def lines(analyzer1_info, analyzer2_info, eur_params):
 
                     present_in_an2 = True
                     result_comparison.stat_matrix[ind1][ind2] += 1
-                    result_comparison.error_list_both.append([file[0], file[1], file[2], error_name1, error_name2])
+                    result_comparison.error_list_both.append([file[0], file[1][defect1_lines_ind],
+                                                              file[2][defect2_lines_ind], error_name1, error_name2])
 
             if not present_in_an2:
                 result_comparison.stat_matrix[ind1][-2] += 1

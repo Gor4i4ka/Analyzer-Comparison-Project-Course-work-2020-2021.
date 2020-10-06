@@ -41,21 +41,6 @@ def srch_list_ind(lst, val):
     return None
 
 
-def count_warnings(analyzer_info):
-    warning_list = []
-    for file in analyzer_info:
-        for el in file[2]:
-            in_list = False
-            for warn in warning_list:
-                if el == warn[0]:
-                    warn[1] += 1
-                    in_list = True
-                    break
-            if not in_list:
-                warning_list.append([el, 1])
-    return warning_list
-
-
 def print_num_blanks(amount):
     for i in range(amount):
         print(" ", end='')
