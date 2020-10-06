@@ -108,12 +108,22 @@ def print_numpy(nparray, rows, columns):
             print(blank_interval, end='')
         print()
 
-arr = np.zeros((2, 3))
-arr1 = np.zeros((2, 3))
-arr[0][0] = 1
-arr[1][2] = 2
-#lst1 = ["Line1", "Line2"]
-#lst2 = ["Column1", "Column2", "Column3"]
-#print_numpy(arr, lst1, lst2)
-arr[:, -1] = arr1[:, -1]
-#print(arr[:, -1])
+
+def save_list(list, path):
+    with open(path, "wb") as filehandle:
+         # store the data as binary data stream
+         pickle.dump(list, filehandle)
+    return 0
+
+
+def load_list(path):
+    with open(path, 'rb') as filehandle:
+        # read the data as binary data stream
+        return pickle.load(filehandle)
+
+
+def print_list(list):
+    for el in list:
+        print("{}".format(el))
+    return 0
+
