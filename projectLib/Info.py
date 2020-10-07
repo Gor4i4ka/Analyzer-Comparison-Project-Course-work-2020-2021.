@@ -8,6 +8,7 @@ from projectLib.Common import srch_ind, save_list, load_list, print_list, juliet
 class Info:
 
     def __init__(self):
+        self.analyzer_name = ""
         self.info = []
         self.infoType = ""
 
@@ -28,8 +29,10 @@ class Info:
 
         # Choose the analyzer
         if analyzer_name == "juliet":
+            self.analyzer_name = analyzer_name
             analyzer_output = self.__juliet_mine(re_expr, manifest_soup, defect_type_list)
         elif analyzer_name == "svace":
+            self.analyzer_name = analyzer_name
             analyzer_output = self.__svace_mine(re_expr, manifest_soup, defect_type_list)
         else:
             print("NO SUCH ANALYZER")

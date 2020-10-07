@@ -76,7 +76,10 @@ def lines(analyzer1_info, analyzer2_info, eur_params):
                 ind2 = srch_list_ind(result_comparison.name_catalog_an2,
                                      analyzer2_info_field[defect2_file_ind2][2][err_ind])
                 result_comparison.stat_matrix[-2][ind2] += 1
-                result_comparison.error_list_an2.append(analyzer2_info_field[defect2_file_ind2])
+                result_comparison.error_list_an2.append([analyzer2_info_field[defect2_file_ind2][0],
+                                                         analyzer2_info_field[defect2_file_ind2][1][err_ind],
+                                                         analyzer2_info_field[defect2_file_ind2][2][err_ind]]
+                                                        )
 
     #################CMP_LIST######################
 

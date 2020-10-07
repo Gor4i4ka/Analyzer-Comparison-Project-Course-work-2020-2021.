@@ -17,6 +17,9 @@ class Comparison:
         self.error_list_an2 = []
         self.error_list_both = []
 
+        self.analyzer1_name = ""
+        self.analyzer2_name = ""
+
     def comparison_fill(self, orig):
         self.name_catalog_an1 = orig.name_catalog_an1
         self.name_catalog_an2 = orig.name_catalog_an2
@@ -26,6 +29,8 @@ class Comparison:
         self.error_list_both = orig.error_list_both
 
     def compare_analyzers_info(self, analyzer1_info, analyzer2_info, eur, eur_params):
+        self.analyzer1_name = analyzer1_info.analyzer_name
+        self.analyzer2_name = analyzer2_info.analyzer_name
 
         if eur == "lines":
             if len(eur_params) == 1:
@@ -69,9 +74,11 @@ class Comparison:
 
         return 0
 
-    def print_comparison(self, mode="stat"):
+    def print_comparison(self, mode="stat", group_by_family=False):
         if mode == "stat":
-            print_numpy(self.stat_matrix, self.name_catalog_an1, self.name_catalog_an2)
+            if not group_by_family:
+                print_numpy(self.stat_matrix, self.name_catalog_an1, self.name_catalog_an2)
+
             return
         error_list = None
         if mode == "er1":
@@ -90,12 +97,15 @@ class Comparison:
     def comparison_union(self, another_comparison):
 
         result_comparison = Comparison()
+        result_comparison.name_catalog_an1 = copy.deepcopy(self.name_catalog_an1)
+        result_comparison.name_catalog_an2 = copy.deepcopy(self.name_catalog_an2)
 
         result_comparison.error_list_both = copy.deepcopy(self.error_list_both)
 
         result_comparison.stat_matrix = np.zeros(self.stat_matrix.shape, dtype='int')
         result_comparison.stat_matrix[-1, :] = self.stat_matrix[-1, :]
         result_comparison.stat_matrix[:, -1] = self.stat_matrix[:, -1]
+        result_comparison.stat_matrix[-2, -2] = -1
 
         for er_an1 in self.error_list_an1:
             if er_an1 in another_comparison.error_list_an1:
@@ -116,7 +126,7 @@ class Comparison:
             result_comparison.stat_matrix[-2, ind] += 1
 
         for er_both2 in another_comparison.error_list_both:
-            er_both2_present_in_union = True
+            er_both2_present_in_union = False
             for er_both1 in self.error_list_both:
                 if er_both1 == er_both2:
                     er_both2_present_in_union = True
@@ -126,127 +136,58 @@ class Comparison:
         result_comparison.error_list_both.sort(key=itemgetter(0))
 
         for er_both in result_comparison.error_list_both:
-            ind1 = srch_list_ind(self.name_catalog_an1, er_both[2])
-            ind2 = srch_list_ind(self.name_catalog_an2, er_both[3])
+            ind1 = srch_list_ind(self.name_catalog_an1, er_both[3])
+            ind2 = srch_list_ind(self.name_catalog_an2, er_both[4])
             result_comparison.stat_matrix[ind1][ind2] += 1
 
         return result_comparison
 
-    def comparison_union1(self, comparison1, comparison2):
-        name_catalog1 = comparison1[0]
-        name_catalog2 = comparison1[1]
+    def comparison_intersection(self, another_comparison):
+        result_comparison = Comparison()
+        result_comparison.name_catalog_an1 = copy.deepcopy(self.name_catalog_an1)
+        result_comparison.name_catalog_an2 = copy.deepcopy(self.name_catalog_an2)
 
-        er_an1_comp1 = comparison1[3]
-        er_an2_comp1 = comparison1[4]
-        er_an_both_comp1 = comparison1[5]
+        result_comparison.error_list_an1 = copy.deepcopy(self.error_list_an1)
+        result_comparison.error_list_an2 = copy.deepcopy(self.error_list_an2)
 
-        er_an1_comp2 = comparison2[3]
-        er_an2_comp2 = comparison2[4]
-        er_an_both_comp2 = comparison2[5]
+        result_comparison.stat_matrix = np.zeros(self.stat_matrix.shape, dtype='int')
+        result_comparison.stat_matrix[-1, :] = self.stat_matrix[-1, :]
+        result_comparison.stat_matrix[:, -1] = self.stat_matrix[:, -1]
+        result_comparison.stat_matrix[-2, -2] = -1
 
-        er_an1_union = []
-        er_an2_union = []
-        er_both_union = copy.deepcopy(er_an_both_comp1)
+        for er_an1 in another_comparison.error_list_an1:
+            if er_an1 not in result_comparison.error_list_an1:
+                result_comparison.error_list_an1.append(er_an1)
+        result_comparison.error_list_an1.sort(key=itemgetter(0))
 
-        stat_matrix_union = np.zeros(comparison1[2].shape, dtype='int')
-        stat_matrix_union[-1, :] = comparison1[2][-1, :]
-        stat_matrix_union[:, -1] = comparison1[2][:, -1]
+        for er_an1 in result_comparison.error_list_an1:
+            ind = srch_list_ind(result_comparison.name_catalog_an1, er_an1[2])
+            result_comparison.stat_matrix[ind, -2] += 1
 
-        for er_an1 in er_an1_comp1:
-            if er_an1 in er_an1_comp2:
-                er_an1_union.append(er_an1)
-        er_an1_union.sort(key=itemgetter(0))
+        for er_an2 in another_comparison.error_list_an2:
+            if er_an2 not in result_comparison.error_list_an2:
+                result_comparison.error_list_an2.append(er_an2)
+        result_comparison.error_list_an2.sort(key=itemgetter(0))
 
-        for er_an1 in er_an1_union:
-            ind = srch_list_ind(name_catalog1, er_an1[2])
-            stat_matrix_union[ind, -2] += 1
+        for er_an2 in result_comparison.error_list_an2:
+            ind = srch_list_ind(result_comparison.name_catalog_an2, er_an2[2])
+            result_comparison.stat_matrix[-2, ind] += 1
 
-        for er_an2 in er_an2_comp1:
-            if er_an2 in er_an2_comp2:
-                er_an2_union.append(er_an2)
-        er_an2_union.sort(key=itemgetter(0))
+        for er_both1 in self.error_list_both:
+            for er_both2 in another_comparison.error_list_both:
+                if er_both1 == er_both2:
+                    result_comparison.error_list_both.append(er_both1)
+                    # ind1 = srch_list_ind(result_comparison.name_catalog_an1, er_both1[2])
+                    # ind2 = srch_list_ind(result_comparison.name_catalog_an2, er_both1[3])
+                    # result_comparison.stat_matrix[ind1][ind2] += 1
+                    break
+        result_comparison.error_list_both.sort(key=itemgetter(0))
 
-        for er_an2 in er_an2_union:
-            ind = srch_list_ind(name_catalog2, er_an2[2])
-            stat_matrix_union[-2, ind] += 1
+        for er_both in result_comparison.error_list_both:
+            ind1 = srch_list_ind(result_comparison.name_catalog_an1, er_both[3])
+            ind2 = srch_list_ind(result_comparison.name_catalog_an2, er_both[4])
+            result_comparison.stat_matrix[ind1][ind2] += 1
 
-        for er_both2 in er_an_both_comp2:
-            er_both2_present_in_union = True
-            for er_both1 in er_an_both_comp1:
-                if er_both1[0] == er_both2[0] and \
-                    er_both1[2] == er_both2[2] and \
-                    er_both1[3] == er_both2[3] and \
-                    len(set(er_both1[1]).intersection(er_both2[1])):
-                        er_both2_present_in_union = True
-                        break
-            if not er_both2_present_in_union:
-                er_both_union.append(er_both2)
-        er_both_union.sort(key=itemgetter(0))
-
-        for er_both in er_both_union:
-            ind1 = srch_list_ind(name_catalog1, er_both[2])
-            ind2 = srch_list_ind(name_catalog2, er_both[3])
-            stat_matrix_union[ind1][ind2] += 1
-
-        return name_catalog1, name_catalog2, stat_matrix_union, \
-                er_an1_union, er_an2_union, er_both_union
-
-    def comparison_intersection(self, comparison1, comparison2):
-        name_catalog1 = comparison1[0]
-        name_catalog2 = comparison1[1]
-
-        er_an1_comp1 = comparison1[3]
-        er_an2_comp1 = comparison1[4]
-        er_an_both_comp1 = comparison1[5]
-
-        er_an1_comp2 = comparison2[3]
-        er_an2_comp2 = comparison2[4]
-        er_an_both_comp2 = comparison2[5]
-
-        er_an1_intersection = copy.deepcopy(er_an1_comp1)
-        er_an2_intersection = copy.deepcopy(er_an2_comp1)
-        er_both_intersection = []
-
-        stat_matrix_intersection = np.zeros(comparison1[2].shape, dtype='int')
-        stat_matrix_intersection[-1, :] = comparison1[2][-1, :]
-        stat_matrix_intersection[:, -1] = comparison1[2][:, -1]
-
-        for er_an1 in er_an1_comp2:
-            if er_an1 not in er_an1_intersection:
-                er_an1_intersection.append(er_an1)
-        er_an1_intersection.sort(key=itemgetter(0))
-
-        for er_an1 in er_an1_intersection:
-            ind = srch_list_ind(name_catalog1, er_an1[2])
-            stat_matrix_intersection[ind, -2] += 1
-
-        for er_an2 in er_an2_comp2:
-            if er_an2 not in er_an2_intersection:
-                er_an2_intersection.append(er_an2)
-        er_an2_intersection.sort(key=itemgetter(0))
-
-        for er_an2 in er_an2_intersection:
-            ind = srch_list_ind(name_catalog2, er_an2[2])
-            stat_matrix_intersection[-2, ind] += 1
-
-        for er_both1 in er_an_both_comp1:
-            for er_both2 in er_an_both_comp2:
-                if er_both1[0] == er_both2[0] and \
-                er_both1[2] == er_both2[2] and \
-                er_both1[3] == er_both2[3] and \
-                len(set(er_both1[1]).intersection(er_both2[1])):
-                    er_both_intersection.append(er_both1)
-                    ind1 = srch_list_ind(name_catalog1, er_both1[2])
-                    ind2 = srch_list_ind(name_catalog2, er_both1[3])
-                    stat_matrix_intersection[ind1][ind2] += 1
-        er_both_intersection.sort(key=itemgetter(0))
-
-        for er_both in er_both_intersection:
-            ind1 = srch_list_ind(name_catalog1, er_both[2])
-            ind2 = srch_list_ind(name_catalog2, er_both[3])
-            stat_matrix_intersection[ind1][ind2] += 1
-
-
-        return comparison1[0], comparison1[1], stat_matrix_intersection, er_an1_intersection, er_an2_intersection, er_both_intersection
+        return result_comparison
 
 
