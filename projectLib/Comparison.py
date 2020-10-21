@@ -2,9 +2,11 @@ from operator import itemgetter
 
 import numpy as np
 import copy
+import clang
+import clang.cindex
 
 # Internal imports
-from projectLib.Common import srch_list_ind, save_list, load_list, print_numpy
+from projectLib.Common import srch_list_ind, save_list, load_list, print_numpy, dump_ast
 from projectLib.Info import Info
 from projectLib.ProjectConfig import type_groups
 
@@ -341,7 +343,120 @@ class Comparison:
 
         return cmp_list
 
-    def analyze_comparison_buffer_overflow(self, type_groups):
+    def search_entities_in_lines(self, node: clang.cindex.Cursor, found_lines: list, result_set: set):
+        #dump_ast(node)
+        if node.kind == clang.cindex.CursorKind.VAR_DECL or \
+           node.kind == clang.cindex.CursorKind.DECL_REF_EXPR:
+           if node.location.line in found_lines:
+            result_set.add(str(node.displayname))
+        for c in node.get_children():
+            self.search_entities_in_lines(c, found_lines, result_set)
+
+    def present_entity_uses(self, node, lines_list, variable_set):
+        if node.kind == clang.cindex.CursorKind.VAR_DECL or \
+           node.kind == clang.cindex.CursorKind.DECL_REF_EXPR:
+            if node.location.line in lines_list:
+                if str(node.displayname) in variable_set:
+                    return True
+        for c in node.get_children():
+            if self.present_entity_uses(c, lines_list, variable_set):
+                return True
+        return False
+
+    def analyze_comparison_buffer_overflow(self):
 
         list_buf_overflow_types_an1 = type_groups[self.analyzer1_name]["Buffer_overflow"]
         list_buf_overflow_types_an2 = type_groups[self.analyzer2_name]["Buffer_overflow"]
+
+        error_list_both_res = copy.deepcopy(self.error_list_both)
+        error_list_an1_res = []
+        error_list_an2_res = []
+
+        found_corresponding_er_both_an1 = np.zeros((len(self.error_list_an1)), dtype=np.bool)
+        found_corresponding_er_both_an2 = np.zeros((len(self.error_list_an2)), dtype=np.bool)
+
+        for found_error_an1 in self.error_list_both:
+            if found_error_an1[3] in list_buf_overflow_types_an1:
+                found_filename = found_error_an1[0]
+                found_lines = found_error_an1[1]
+
+                same_file_error_ind_list_an1 = []
+                same_file_error_list_an1 = []
+
+                same_file_error_ind_list_an2 = []
+                same_file_error_list_an2 = []
+
+                for unfound_error_an1_ind in range(len(self.error_list_an1)):
+                    if self.error_list_an1[unfound_error_an1_ind][0] == found_filename and \
+                       self.error_list_an1[unfound_error_an1_ind][2] in list_buf_overflow_types_an1:
+                        same_file_error_ind_list_an1.append(unfound_error_an1_ind)
+                        same_file_error_list_an1.append(self.error_list_an1[unfound_error_an1_ind])
+
+                for unfound_error_an2_ind in range(len(self.error_list_an2)):
+                    if self.error_list_an2[unfound_error_an2_ind][0] == found_filename and \
+                       self.error_list_an2[unfound_error_an2_ind][2] in list_buf_overflow_types_an2:
+                        same_file_error_ind_list_an2.append(unfound_error_an2_ind)
+                        same_file_error_list_an2.append(self.error_list_an1[unfound_error_an2_ind])
+
+                index = clang.cindex.Index.create()
+                translation_unit = index.parse(found_filename, args=["-std=c++17"])
+                cursor = translation_unit.cursor
+
+                variable_set = set()
+                self.search_entities_in_lines(cursor, found_lines, variable_set)
+
+                for er_ind in range(len(same_file_error_list_an1)):
+                    if self.present_entity_uses(cursor, same_file_error_list_an1[er_ind][1], variable_set):
+
+                        error_name1 = same_file_error_list_an1[er_ind][2]
+                        error_name2 = found_error_an1[4]
+
+                        ind1 = srch_list_ind(self.name_catalog_an1, error_name1)
+                        ind2 = srch_list_ind(self.name_catalog_an2, error_name2)
+
+                        if not found_corresponding_er_both_an1[same_file_error_ind_list_an1[er_ind]]:
+                            self.stat_matrix[ind1][-2] -= 1
+                            found_corresponding_er_both_an1[same_file_error_ind_list_an1[er_ind]] = True
+
+                        self.stat_matrix[ind1][ind2] += 1
+
+                        error_list_both_res.append([found_filename,
+                                                    same_file_error_list_an1[er_ind][1],
+                                                    found_error_an1[2],
+                                                    error_name1,
+                                                    error_name2])
+
+                for er_ind in range(len(same_file_error_list_an2)):
+                    if self.present_entity_uses(cursor, same_file_error_list_an2[er_ind][1], variable_set):
+
+                        error_name1 = found_error_an1[3]
+                        error_name2 = same_file_error_list_an2[er_ind][2]
+
+                        ind1 = srch_list_ind(self.name_catalog_an1, error_name1)
+                        ind2 = srch_list_ind(self.name_catalog_an2, error_name2)
+
+                        if not found_corresponding_er_both_an2[same_file_error_ind_list_an2[er_ind]]:
+                            self.stat_matrix[-2][ind2] -= 1
+                            found_corresponding_er_both_an2[same_file_error_ind_list_an2[er_ind]] = True
+
+                        self.stat_matrix[ind1][ind2] += 1
+
+                        error_list_both_res.append([found_filename,
+                                                    found_error_an1[1],
+                                                    same_file_error_list_an2[er_ind][1],
+                                                    error_name1,
+                                                    error_name2])
+
+        for error_an1_ind in range(len(self.error_list_an1)):
+            if not found_corresponding_er_both_an1[error_an1_ind]:
+                error_list_an1_res.append(self.error_list_an1[error_an1_ind])
+
+        for error_an2_ind in range(len(self.error_list_an2)):
+            if not found_corresponding_er_both_an2[error_an2_ind]:
+                error_list_an2_res.append(self.error_list_an2[error_an2_ind])
+
+        self.error_list_an1 = error_list_an1_res
+        self.error_list_an2 = error_list_an2_res
+        self.error_list_both = error_list_both_res
+
+        return

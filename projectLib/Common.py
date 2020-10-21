@@ -2,22 +2,23 @@ import pickle
 import os
 import asciitree
 import sys
+import clang
+import clang.cindex
 
 #Internal imports
 from projectLib.ProjectConfig import xml_source_path, juliet_work_path
 
-def node_children(node):
-    return (c for c in node.get_children())
 
-def print_node(node):
-    text = node.spelling or node.displayname
-    kind = str(node.kind)[str(node.kind).index('.')+1:]
-    return '{} {}'.format(kind, text)
+def dump_ast(node: clang.cindex.Cursor, ident=""):
+    print(ident + str(node.kind))
 
-def dump_ast(cursor):
-    print(asciitree.draw_tree(cursor, node_children, print_node))
+    for c in node.get_children():
+        dump_ast(c, ident + "_")
 
-def replace_at_home(filename: str):
+
+def replace_at_home(filename: str, at_home=False):
+    if not at_home:
+        return filename
     home_path = '/home/gorchichka/'
     return home_path + filename[11:]
 
@@ -29,32 +30,32 @@ def juliet_shorten(string: str):
         return string[:6]
 
 
-def find_in_juliet(filename: str, at_home=False):
-    juliet_path_at_home = ""
-    if at_home:
-        juliet_path_at_home = juliet_work_path + "/testcases"
+def find_in_juliet(filename: str, flag=False):
 
     juliet_path = get_parent_dirs(xml_source_path["juliet"]) + "/testcases"
     for testcase in os.listdir(juliet_path):
         if os.path.isdir(juliet_path + "/" + testcase):
             if juliet_shorten(testcase) == juliet_shorten(filename):
-                if at_home:
-                    juliet_path_at_home += "/" + testcase
                 juliet_path += "/" + testcase
                 break
+    if flag:
+        print(juliet_path)
     for segment_or_file in os.listdir(juliet_path):
         if os.path.isdir(juliet_path + "/" + segment_or_file):
             subdir = "/" + segment_or_file
+            if flag:
+                print(juliet_path + subdir)
             for file in os.listdir(juliet_path + subdir):
+
                 if file == filename:
-                    if at_home:
-                        return juliet_path_at_home + subdir + "/" + file
                     return juliet_path + subdir + "/" + file
         if os.path.isfile(juliet_path + "/" + segment_or_file):
+            if flag:
+                print("HEH2")
             if filename == segment_or_file:
-                if at_home:
-                    return juliet_path_at_home + "/" + segment_or_file
                 return juliet_path + "/" + segment_or_file
+    if flag:
+        print(juliet_path)
     return -1
 
 
@@ -165,4 +166,5 @@ def print_list(lst):
     for el in lst:
         print("{}".format(el))
     return 0
+
 

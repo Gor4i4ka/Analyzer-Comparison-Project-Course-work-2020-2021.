@@ -42,6 +42,9 @@ class Info:
             print("NO SUCH ANALYZER")
             return -1
 
+        for el in analyzer_output:
+            if type(el[0]) == type(0):
+                print(el[0])
         # PostProcess analyzer's output
         analyzer_output.sort(key=itemgetter(0))
 
@@ -138,7 +141,15 @@ class Info:
             for file in found:
 
                 has_flaw = False
-                testcase_list.append([find_in_juliet(file["path"], at_home=True), [], juliet_shorten(file["path"])])
+                found_file = find_in_juliet(file["path"])
+                if found_file == -1:
+                    continue
+                # if type(find_in_juliet(file["path"])) == type(0):
+                #     print(file["path"])
+                #     print(find_in_juliet(file["path"], flag=True))
+                # else:
+                #     print("BINGO")
+                testcase_list.append([found_file, [], juliet_shorten(file["path"])])
                 flaws = file.find_all("flaw")
                 for flaw in flaws:
                     has_flaw = True

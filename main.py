@@ -12,11 +12,11 @@ juliet_res_dir = xml_source_path["juliet"]
 svace_res_dir = xml_source_path["svace"]
 cwe_num_list = cwe_num_list
 
-svace_info = Info()
-svace_info.mine_info("svace", svace_res_dir, cwe_num_list, warnings_list["svace"])
-
 juliet_info = Info()
 juliet_info.mine_info("juliet", juliet_res_dir, cwe_num_list, warnings_list["juliet"])
+
+svace_info = Info()
+svace_info.mine_info("svace", svace_res_dir, cwe_num_list, warnings_list["svace"])
 
 svace_info.save_info(info_path["svace"])
 juliet_info.save_info(info_path["juliet"])

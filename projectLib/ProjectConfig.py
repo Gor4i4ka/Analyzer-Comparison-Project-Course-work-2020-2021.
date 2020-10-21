@@ -7,8 +7,8 @@ juliet_work_path = "/home/nick/C"
 # Info related
 
 xml_source_path = {
-    "juliet": "/home/gorchichka/C/manifest.xml",
-    "svace": "/home/gorchichka/svc/C.svres"
+    "juliet": "/home/nick/C/manifest.xml",
+    "svace": "/home/nick/svc/C.svres"
 
 }
 
@@ -25,8 +25,8 @@ cwe_num_list = ["CWE121_Stack_Based_Buffer_Overflow",
                 ]
 
 info_path = {
-    "juliet": "/home/gorchichka/svc/juliet_info",
-    "svace": "/home/gorchichka/svc/svace_info"
+    "juliet": "/home/nick/svc/juliet_info",
+    "svace": "/home/nick/svc/svace_info"
 
 }
 
@@ -39,8 +39,8 @@ warnings_list = {
 # Comparison related
 
 comp_results_path = {
-    "juliet": "/home/gorchichka/svc/juliet_results",
-    "svace": "/home/gorchichka/svc/svace_results"
+    "juliet": "/home/nick/svc/juliet_results",
+    "svace": "/home/nick/svc/svace_results"
 
 }
 

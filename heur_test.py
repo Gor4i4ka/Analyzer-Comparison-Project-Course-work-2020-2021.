@@ -24,4 +24,5 @@ comparison2 = Heuristic(heuristic_union_list[2][0], heuristic_union_list[2][1]).
 
 comparison = comparison1.comparison_union(comparison2)
 comparison.print_comparison()
+comparison.print_comparison(group_by_type_groups=True)
 
