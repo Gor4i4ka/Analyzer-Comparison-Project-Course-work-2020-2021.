@@ -1,6 +1,14 @@
+import clang
+import clang.cindex
+
+# juliet_related
+juliet_work_path = "/home/nick/C"
+
+# Info related
+
 xml_source_path = {
-    "juliet": "/home/nick/C/manifest.xml",
-    "svace": "/home/nick/C.svres"
+    "juliet": "/home/gorchichka/C/manifest.xml",
+    "svace": "/home/gorchichka/svc/C.svres"
 
 }
 
@@ -16,15 +24,9 @@ cwe_num_list = ["CWE121_Stack_Based_Buffer_Overflow",
                 "CWE416_Use_After_Free"
                 ]
 
-data_path = {
-    "juliet": "/home/nick/svace/save_info/juliet_info.data",
-    "svace": "/home/nick/svace/save_info/svc_info.data"
-
-}
-
-comp_results_path = {
-    "juliet": "/home/nick/svace/save_results",
-    "svace": "/home/nick/svace/save_results"
+info_path = {
+    "juliet": "/home/gorchichka/svc/juliet_info",
+    "svace": "/home/gorchichka/svc/svace_info"
 
 }
 
@@ -34,14 +36,39 @@ warnings_list = {
 
 }
 
+# Comparison related
+
+comp_results_path = {
+    "juliet": "/home/gorchichka/svc/juliet_results",
+    "svace": "/home/gorchichka/svc/svace_results"
+
+}
+
 type_groups = {
-    "svace":    None,
-    "juliet":   {"Buffer_overflow.jul": ["CWE121", "CWE122"],
-                "Integer_overflow.jul": ["CWE190", "CWE191"],
-                "Memory_leak.jul": ["CWE401", "CWE151", "CWE416"]}
+    "svace":    {"Buffer_overflow": ["BUFFER_SHIFT", "BUFFER_OVERFLOW.EX",
+                                         "DYNAMIC_OVERFLOW.EX", "BUFFER_OVERFLOW.STRING",
+                                         "OVERFLOW_AFTER_CHECK.EX", "OVERFLOW_UNDER_CHECK",
+                                         "STRING_OVERFLOW", "DYNAMIC_OVERFLOW",
+                                         ],
+                 "TOTAL_COMPRESSION": 7},
+    "juliet":   {"Buffer_overflow": ["CWE121", "CWE122"],
+                "Integer_overflow": ["CWE190", "CWE191"],
+                "Memory_leak": ["CWE401", "CWE415", "CWE416"],
+                 "TOTAL_COMPRESSION": 4}
 }
 
-euristics_params = {
-    "Lines": {"distance": 0}
+# Heuristic related
 
-}
+heuristic_union_list = [
+    ["lines", {"distance": 0}],
+    ["lines", {"distance": 1}],
+    ["same_syntax_construct", {"statement_list": [clang.cindex.CursorKind.IF_STMT],
+                                  "analyzer1_warn_types_list": ["SIMILAR_BRANCHES"],
+                                  "analyzer2_warn_types_list": None,
+                                  "c++_version": "-std=c++17"}]
+]
+
+
+
+
+

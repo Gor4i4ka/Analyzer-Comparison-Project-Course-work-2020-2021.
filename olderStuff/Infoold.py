@@ -6,7 +6,7 @@ import bs4
 import re
 
 # Internal imports
-from projectLib.Common import save_list, load_list, print_list, juliet_shorten, remove_parent_dirs, find_in_juliet
+from projectLib.Common import save_list, load_list, print_list, juliet_shorten, remove_parent_dirs
 
 
 class Info:
@@ -106,7 +106,7 @@ class Info:
                 if trace["role"] != "counter-example":
                     for locinf in trace.find_all("locinfo", attrs={"file": re.compile(re_expr)}):
                         if name == "":
-                            name = locinf["file"]
+                            name = remove_parent_dirs(locinf["file"])
                             loc_warn.append(name)
                         loc_lines.append(int(locinf["line"]))
 
@@ -115,7 +115,7 @@ class Info:
                 loc_warn_sv.append(loc_warn)
 
         for warn in found:
-            warning = [warn["file"], None, warn['warnclass']]
+            warning = [remove_parent_dirs(warn["file"]), None, warn['warnclass']]
             list_warn_sv.append(warning)
 
         loc_warn_sv.sort(key=itemgetter(0))
@@ -138,7 +138,7 @@ class Info:
             for file in found:
 
                 has_flaw = False
-                testcase_list.append([find_in_juliet(file["path"], at_home=True), [], juliet_shorten(file["path"])])
+                testcase_list.append([file["path"], [], juliet_shorten(file["path"])])
                 flaws = file.find_all("flaw")
                 for flaw in flaws:
                     has_flaw = True
