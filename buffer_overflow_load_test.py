@@ -9,4 +9,4 @@ from projectLib.Heuristic import Heuristic
 comparison = Comparison()
 comparison.load_comparison(comp_results_path["svace"], 2)
 
-comparison.print_comparison(mode="er2")
+comparison.print_comparison(group_by_type_groups=True)

@@ -4,11 +4,31 @@ import asciitree
 import sys
 import clang
 import clang.cindex
+import copy
 
 #Internal imports
 from projectLib.ProjectConfig import xml_source_path, juliet_work_path
 
 
+def list_intersect(lst1: list, lst2: list):
+    result_list = []
+    for el1 in lst1:
+        if el1 in lst2:
+            result_list.append(lst1)
+
+    return result_list
+
+
+def list_subtraction(lst1: list, lst2: list):
+    result_list = copy.deepcopy(lst1)
+    for el1 in lst1:
+        if el1 in lst2:
+            result_list.remove(el1)
+            lst2.remove(el1)
+
+    return result_list
+
+#print(list_subtraction([[1, 4], 2, 3, 4, 5, 2], [3, [1, 4], 5, 2]))
 def dump_ast(node: clang.cindex.Cursor, ident=""):
     print(ident + str(node.kind))
 

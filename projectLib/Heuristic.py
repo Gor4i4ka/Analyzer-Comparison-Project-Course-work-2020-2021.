@@ -206,41 +206,5 @@ class Heuristic:
         return result_comparison
 
 
-def find_typerefs(node, typename):
-    """ Find all references to the type named 'typename'
-    """
-    if node.kind.is_reference():
-        ref_node = clang.cindex.Cursor_ref(node)
-        if ref_node.spelling == typename:
-            print ('Found %s [line=%s, col=%s]' % (
-                typename, node.location.line, node.location.column))
-    # Recurse for children of this node
-    for c in node.get_children():
-        find_typerefs(c, typename)
 
-
-def find_if(node: clang.cindex.Cursor, lst):
-    if node.kind == clang.cindex.CursorKind.IF_STMT:
-        trace_unit = []
-        trace_unit.append(node.location.line)
-        sub_stmts = list(node.get_children())
-        for el in sub_stmts:
-            trace_unit.append(el.location.line)
-            print(el.kind)
-        print()
-        print(trace_unit)
-        lst.append(trace_unit)
-
-    for c in node.get_children():
-        find_if(c, lst)
-    return
-
-#index = clang.cindex.Index.create()
-#translation_unit = index.parse(replace_at_home("/home/nick/dummy.c"),
- #                                          args=["-std=c++17"])
-#cursor = translation_unit.cursor
-#lst = []
-#find_if(cursor, lst)
-#print(lst)
-#print(find_if(cursor, lst))
 

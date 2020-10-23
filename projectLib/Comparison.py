@@ -35,14 +35,6 @@ class Comparison:
         self.analyzer1_name = orig.analyzer1_name
         self.analyzer2_name = orig.analyzer2_name
 
-    # def compare_analyzers_info(self, analyzer1_info, analyzer2_info, heuristic_name, heuristic_params):
-    #     self.analyzer1_name = analyzer1_info.analyzer_name
-    #     self.analyzer2_name = analyzer2_info.analyzer_name
-    #     heuristic = Heuristic(heuristic_name, heuristic_params)
-    #     self.comparison_copy(heuristic.invoke_heuristic(analyzer1_info, analyzer2_info))
-    #
-    #     return 0
-
     def save_comparison(self, res_dir, comparison_id):
 
         name_catalog_an1_path = res_dir + "/name_catalog_an1_ind" + str(comparison_id) + ".data"
