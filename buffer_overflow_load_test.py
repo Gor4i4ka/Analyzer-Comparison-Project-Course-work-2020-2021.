@@ -7,6 +7,8 @@ from projectLib.ProjectConfig import *
 from projectLib.Heuristic import Heuristic
 
 comparison = Comparison()
-comparison.load_comparison(comp_results_path["svace"], 2)
+comparison.load_comparison(comp_results_path["svace"], 1)
 
-comparison.print_comparison(group_by_type_groups=True)
+comparison.print_comparison()
+comparison_grouped = comparison.group_comparison(type_groups["svace"], type_groups["juliet"])
+comparison_grouped.print_comparison()

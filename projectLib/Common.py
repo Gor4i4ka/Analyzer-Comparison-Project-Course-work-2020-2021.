@@ -124,6 +124,7 @@ def print_num_blanks(amount):
 
 
 def print_numpy(nparray, rows, columns):
+
     int_buffer_max = len(str(nparray.max()))
     column_buffer_max = 0
     row_buffer_max = 0

@@ -79,64 +79,111 @@ class Comparison:
 
         return 0
 
-    def print_comparison(self, mode="stat", group_by_type_groups=False):
+    def group_comparison(self, an1_type_groups, an2_type_groups):
+        result_comparison = Comparison()
+
+        result_comparison.stat_matrix = np.zeros((self.stat_matrix.shape[0] - an1_type_groups["TOTAL_COMPRESSION"],
+                                                  self.stat_matrix.shape[1] - an2_type_groups["TOTAL_COMPRESSION"]),
+                                                  dtype=np.int)
+
+        result_comparison.analyzer1_name = self.analyzer1_name
+        result_comparison.analyzer2_name = self.analyzer2_name
+
+        name_catalog_an1_dict = []
+        name_catalog_an1_initial = []
+
+        for el_ind in range(len(self.name_catalog_an1)):
+            name_catalog_an1_initial.append([self.name_catalog_an1[el_ind], [el_ind]])
+
+        for dict_name in an1_type_groups:
+            if dict_name == "TOTAL_COMPRESSION":
+                continue
+            dict_name_column_list = []
+            for catalog_name_ind in range(len(self.name_catalog_an1)):
+                if self.name_catalog_an1[catalog_name_ind] in an1_type_groups[dict_name]:
+                    dict_name_column_list.append(catalog_name_ind)
+                    name_catalog_an1_initial.remove([self.name_catalog_an1[catalog_name_ind], [catalog_name_ind]])
+            name_catalog_an1_dict.append([dict_name, dict_name_column_list])
+
+        name_catalog_an2_dict = []
+        name_catalog_an2_initial = []
+
+        for el_ind in range(len(self.name_catalog_an2)):
+            name_catalog_an2_initial.append([self.name_catalog_an2[el_ind], [el_ind]])
+
+        for dict_name in an2_type_groups:
+            if dict_name == "TOTAL_COMPRESSION":
+                continue
+            dict_name_column_list = []
+            for catalog_name_ind in range(len(self.name_catalog_an2)):
+                if self.name_catalog_an2[catalog_name_ind] in an2_type_groups[dict_name]:
+                    dict_name_column_list.append(catalog_name_ind)
+                    name_catalog_an2_initial.remove(
+                        [self.name_catalog_an2[catalog_name_ind], [catalog_name_ind]])
+            name_catalog_an2_dict.append([dict_name, dict_name_column_list])
+
+        name_catalog_an1_merged = name_catalog_an1_dict + name_catalog_an1_initial
+        name_catalog_an2_merged = name_catalog_an2_dict + name_catalog_an2_initial
+
+        for an1_ind in range(len(name_catalog_an1_merged)):
+            for an2_ind in range(len(name_catalog_an2_merged)):
+                for stat_matrix_ind_line in name_catalog_an1_merged[an1_ind][1]:
+                    for stat_matrix_ind_column in name_catalog_an2_merged[an2_ind][1]:
+                        result_comparison.stat_matrix[an1_ind][an2_ind] += \
+                            self.stat_matrix[stat_matrix_ind_line][stat_matrix_ind_column]
+
+        result_comparison.name_catalog_an1 = [name[0] for name in name_catalog_an1_merged]
+        result_comparison.name_catalog_an2 = [name[0] for name in name_catalog_an2_merged]
+
+        for er_an1 in self.error_list_an1:
+            error_name = er_an1[2]
+            ind = srch_list_ind(self.name_catalog_an1, error_name)
+            for name_merged_ind in range(len(name_catalog_an1_merged)):
+                if ind in name_catalog_an1_merged[name_merged_ind][1]:
+                    result_comparison.error_list_an1.append([er_an1[0],
+                                                            er_an1[1],
+                                                            name_catalog_an1_merged[name_merged_ind][0]])
+
+        for er_an2 in self.error_list_an2:
+            error_name = er_an2[2]
+            ind = srch_list_ind(self.name_catalog_an2, error_name)
+            for name_merged_ind in range(len(name_catalog_an2_merged)):
+                if ind in name_catalog_an2_merged[name_merged_ind][1]:
+                    result_comparison.error_list_an2.append([er_an2[0],
+                                                            er_an2[1],
+                                                            name_catalog_an2_merged[name_merged_ind][0]])
+                    break
+
+        for er_both in self.error_list_both:
+            error_name1 = er_both[3]
+            ind1 = srch_list_ind(self.name_catalog_an1, error_name1)
+            error_name2 = er_both[4]
+            ind2 = srch_list_ind(self.name_catalog_an2, error_name2)
+
+            error_name_merged1 = None
+            error_name_merged2 = None
+
+            for name_merged_ind in range(len(name_catalog_an1_merged)):
+                if ind1 in name_catalog_an1_merged[name_merged_ind][1]:
+                    error_name_merged1 = name_catalog_an1_merged[name_merged_ind][0]
+                    break
+
+            for name_merged_ind in range(len(name_catalog_an2_merged)):
+                if ind2 in name_catalog_an2_merged[name_merged_ind][1]:
+                    error_name_merged2 = name_catalog_an2_merged[name_merged_ind][0]
+                    break
+
+            result_comparison.error_list_both.append([er_both[0],
+                                                      er_both[1],
+                                                      er_both[2],
+                                                      error_name_merged1,
+                                                      error_name_merged2])
+
+        return result_comparison
+
+    def print_comparison(self, mode="stat"):
         if mode == "stat":
-            if not group_by_type_groups:
-                print_numpy(self.stat_matrix, self.name_catalog_an1, self.name_catalog_an2)
-            else:
-                an1_type_groups = type_groups[self.analyzer1_name]
-                an2_type_groups = type_groups[self.analyzer2_name]
-
-                stat_matrix_grouped = np.zeros((self.stat_matrix.shape[0] - an1_type_groups["TOTAL_COMPRESSION"],
-                                                self.stat_matrix.shape[1] - an2_type_groups["TOTAL_COMPRESSION"]),
-                                               dtype=np.int)
-
-                name_catalog_an1_dict = []
-                name_catalog_an1_initial = []
-
-                for el_ind in range(len(self.name_catalog_an1)):
-                    name_catalog_an1_initial.append([self.name_catalog_an1[el_ind], [el_ind]])
-
-                for dict_name in an1_type_groups:
-                    if dict_name == "TOTAL_COMPRESSION":
-                        continue
-                    dict_name_column_list = []
-                    for catalog_name_ind in range(len(self.name_catalog_an1)):
-                        if self.name_catalog_an1[catalog_name_ind] in an1_type_groups[dict_name]:
-                            dict_name_column_list.append(catalog_name_ind)
-                            name_catalog_an1_initial.remove([self.name_catalog_an1[catalog_name_ind], [catalog_name_ind]])
-                    name_catalog_an1_dict.append([dict_name, dict_name_column_list])
-
-                name_catalog_an2_dict = []
-                name_catalog_an2_initial = []
-
-                for el_ind in range(len(self.name_catalog_an2)):
-                    name_catalog_an2_initial.append([self.name_catalog_an2[el_ind], [el_ind]])
-
-                for dict_name in an2_type_groups:
-                    if dict_name == "TOTAL_COMPRESSION":
-                        continue
-                    dict_name_column_list = []
-                    for catalog_name_ind in range(len(self.name_catalog_an2)):
-                        if self.name_catalog_an2[catalog_name_ind] in an2_type_groups[dict_name]:
-                            dict_name_column_list.append(catalog_name_ind)
-                            name_catalog_an2_initial.remove(
-                                [self.name_catalog_an2[catalog_name_ind], [catalog_name_ind]])
-                    name_catalog_an2_dict.append([dict_name, dict_name_column_list])
-
-                name_catalog_an1_merged = name_catalog_an1_dict + name_catalog_an1_initial
-                name_catalog_an2_merged = name_catalog_an2_dict + name_catalog_an2_initial
-
-                for an1_ind in range(len(name_catalog_an1_merged)):
-                    for an2_ind in range(len(name_catalog_an2_merged)):
-                        for stat_matrix_ind_line in name_catalog_an1_merged[an1_ind][1]:
-                            for stat_matrix_ind_column in name_catalog_an2_merged[an2_ind][1]:
-                                stat_matrix_grouped[an1_ind][an2_ind] += \
-                                    self.stat_matrix[stat_matrix_ind_line][stat_matrix_ind_column]
-
-                print_numpy(stat_matrix_grouped,
-                            [name[0] for name in name_catalog_an1_merged],
-                            [name[0] for name in name_catalog_an2_merged])
+            print_numpy(self.stat_matrix, self.name_catalog_an1, self.name_catalog_an2)
             return
         error_list = None
         if mode == "er1":

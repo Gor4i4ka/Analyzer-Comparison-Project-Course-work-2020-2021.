@@ -9,8 +9,8 @@ from projectLib.Heuristic import Heuristic
 comparison = Comparison()
 comparison.load_comparison(comp_results_path["svace"], 0)
 
-comparison.print_comparison(group_by_type_groups=True)
+comparison.group_comparison(type_groups["svace"], type_groups["juliet"]).print_comparison()
 comparison.analyze_comparison_buffer_overflow()
 #comparison.print_comparison()
-comparison.print_comparison(group_by_type_groups=True)
+comparison.group_comparison(type_groups["svace"], type_groups["juliet"]).print_comparison()
 comparison.save_comparison(res_dir=comp_results_path["svace"], comparison_id=2)

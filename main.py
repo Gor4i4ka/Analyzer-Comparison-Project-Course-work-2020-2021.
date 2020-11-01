@@ -56,9 +56,9 @@ comparison2.load_comparison(comp_results_path["svace"], 1)
 
 print("COMPARISON 1")
 comparison1.print_comparison()
-comparison1.print_comparison(group_by_type_groups=True)
+comparison1.group_comparison(type_groups["svace"], type_groups["juliet"]).print_comparison()
 print("COMPARISON 2")
 comparison2.print_comparison()
-comparison2.print_comparison(group_by_type_groups=True)
+comparison2.group_comparison(type_groups["svace"], type_groups["juliet"]).print_comparison()
 
 # COMPARISON LOADING PART END
