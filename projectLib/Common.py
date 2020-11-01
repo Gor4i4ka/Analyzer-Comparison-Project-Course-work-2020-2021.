@@ -7,7 +7,7 @@ import clang.cindex
 import copy
 
 #Internal imports
-from projectLib.ProjectConfig import xml_source_path, juliet_work_path
+from projectLib.ProjectConfig import xml_source_path
 
 
 def list_intersect(lst1: list, lst2: list):

@@ -1,14 +1,11 @@
 import clang
 import clang.cindex
 
-# juliet_related
-juliet_work_path = "/home/nick/C"
-
-# Info related
+user = "nick"
 
 xml_source_path = {
-    "juliet": "/home/nick/C/manifest.xml",
-    "svace": "/home/nick/svc/C.svres"
+    "juliet": "/home/" + user +"/C/manifest.xml",
+    "svace": "/home/" + user + "/svc/C.svres"
 
 }
 
@@ -25,8 +22,8 @@ cwe_num_list = ["CWE121_Stack_Based_Buffer_Overflow",
                 ]
 
 info_path = {
-    "juliet": "/home/nick/svc/juliet_info",
-    "svace": "/home/nick/svc/svace_info"
+    "juliet": "/home/" + user + "/svc/juliet_info",
+    "svace": "/home/" + user +"/svc/svace_info"
 
 }
 
@@ -39,8 +36,8 @@ warnings_list = {
 # Comparison related
 
 comp_results_path = {
-    "juliet": "/home/nick/svc/juliet_results",
-    "svace": "/home/nick/svc/svace_results"
+    "juliet": "/home/" + user + "/svc/juliet_results",
+    "svace": "/home/" + user + "/svc/svace_results"
 
 }
 
