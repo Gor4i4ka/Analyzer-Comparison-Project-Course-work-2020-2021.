@@ -499,3 +499,25 @@ class Comparison:
         self.error_list_both = error_list_both_res
 
         return
+
+    def get_list_by_type(self, type_list, mode, for_analyzer=1):
+
+        er_list = None
+        result_list = []
+
+        if mode == "er1":
+            er_list = self.error_list_an1
+        if mode == "er2":
+            er_list = self.error_list_an2
+        if mode == "er_both":
+            er_list = self.error_list_both
+
+        if not er_list:
+            print("NO SUCH ERROR LIST")
+            return -1
+
+        for error in er_list:
+            if error[1 + for_analyzer] in type_list:
+                result_list.append(error)
+
+        return result_list
