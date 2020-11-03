@@ -250,6 +250,45 @@ class Comparison:
 
         return result_comparison
 
+    def __same_error_extract_both(self, current_error_ind):
+        result_list_an1 = []
+        result_list_an2 = []
+        current_error = self.error_list_both[current_error_ind]
+        for error_ind in range(current_error_ind + 1, len(self.error_list_both)):
+            error = self.error_list_both[error_ind]
+            if current_error[0] != error[0]:
+                break
+
+            if current_error[1] == error[1] and \
+               current_error[3] == error[3]:
+                result_list_an1.append([error[2], error[4]])
+
+            if current_error[2] == error[2] and \
+               current_error[4] == error[4]:
+                result_list_an2.append([error[1], error[3]])
+        return result_list_an1, result_list_an2
+
+    def comparison_substraction(self, another_comparison):
+        result_comparison = Comparison()
+        result_comparison.name_catalog_an1 = copy.deepcopy(self.name_catalog_an1)
+        result_comparison.name_catalog_an2 = copy.deepcopy(self.name_catalog_an2)
+
+        result_comparison.error_list_both = copy.deepcopy(self.error_list_both)
+        result_comparison.error_list_an1 = copy.deepcopy(self.error_list_an1)
+        result_comparison.error_list_an2 = copy.deepcopy(self.error_list_an2)
+
+        result_comparison.stat_matrix = np.zeros(self.stat_matrix.shape, dtype='int')
+        result_comparison.stat_matrix[-1, :] = self.stat_matrix[-1, :]
+        result_comparison.stat_matrix[:, -1] = self.stat_matrix[:, -1]
+        result_comparison.stat_matrix[-2, -2] = -1
+
+        result_comparison.analyzer1_name = self.analyzer1_name
+        result_comparison.analyzer2_name = self.analyzer2_name
+
+        for er_both in another_comparison.error_list_both:
+            if er_both in result_comparison.error_list_both:
+                result_comparison.error_list_both.remove(er_both)
+
     def comparison_intersection(self, another_comparison):
         result_comparison = Comparison()
         result_comparison.name_catalog_an1 = copy.deepcopy(self.name_catalog_an1)
@@ -283,6 +322,21 @@ class Comparison:
         for er_an2 in result_comparison.error_list_an2:
             ind = srch_list_ind(result_comparison.name_catalog_an2, er_an2[2])
             result_comparison.stat_matrix[-2, ind] += 1
+
+        cur_file_ind = 0
+        for er_both1 in self.error_list_both:
+            er_both1_found = False
+            for er_both2 in another_comparison.error_list_both:
+                if er_both1[0] == er_both2[0]:
+
+                    if er_both1[1] == er_both2[1] and \
+                        er_both1[3] == er_both2[3]:
+
+                    result_comparison.error_list_both.append(er_both1)
+                    # ind1 = srch_list_ind(result_comparison.name_catalog_an1, er_both1[2])
+                    # ind2 = srch_list_ind(result_comparison.name_catalog_an2, er_both1[3])
+                    # result_comparison.stat_matrix[ind1][ind2] += 1
+                    break
 
         for er_both1 in self.error_list_both:
             for er_both2 in another_comparison.error_list_both:
@@ -502,6 +556,7 @@ class Comparison:
 
     def get_list_by_type(self, type_list, mode, for_analyzer=1):
 
+        align = 1
         er_list = None
         result_list = []
 
@@ -511,13 +566,13 @@ class Comparison:
             er_list = self.error_list_an2
         if mode == "er_both":
             er_list = self.error_list_both
-
+            align += 1
         if not er_list:
             print("NO SUCH ERROR LIST")
             return -1
 
         for error in er_list:
-            if error[1 + for_analyzer] in type_list:
+            if error[align + for_analyzer] in type_list:
                 result_list.append(error)
 
         return result_list

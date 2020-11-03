@@ -142,8 +142,8 @@ class Info:
 
                 has_flaw = False
                 found_file = find_in_juliet(file["path"])
-                #if found_file == -1:
-                #    continue
+                if found_file == -1:
+                    continue
                 # if type(find_in_juliet(file["path"])) == type(0):
                 #     print(file["path"])
                 #     print(find_in_juliet(file["path"], flag=True))
