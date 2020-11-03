@@ -2,14 +2,14 @@ import copy
 
 # Internal imports
 from projectLib.Comparison import Comparison
-from projectLib.Info import Info
+from projectLib.AnalyzerInfo import AnalyzerInfo
 from projectLib.ProjectConfig import *
 from projectLib.Heuristic import Heuristic
 from projectLib.Common import list_subtraction
 
-svace_info = Info()
+svace_info = AnalyzerInfo()
 svace_info.load_info(info_path["svace"])
-juliet_info = Info()
+juliet_info = AnalyzerInfo()
 juliet_info.load_info(info_path["juliet"])
 
 path_test = "/home/nick/dummy/same_syntax_test_file.c"

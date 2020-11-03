@@ -2,7 +2,7 @@ import copy
 
 # Internal imports
 from projectLib.Comparison import Comparison
-from projectLib.Info import Info
+from projectLib.AnalyzerInfo import AnalyzerInfo
 from projectLib.ProjectConfig import *
 from projectLib.Heuristic import Heuristic
 
@@ -12,10 +12,10 @@ juliet_res_dir = xml_source_path["juliet"]
 svace_res_dir = xml_source_path["svace"]
 cwe_num_list = cwe_num_list
 
-juliet_info = Info()
+juliet_info = AnalyzerInfo()
 juliet_info.mine_info("juliet", juliet_res_dir, cwe_num_list, warnings_list["juliet"])
 
-svace_info = Info()
+svace_info = AnalyzerInfo()
 svace_info.mine_info("svace", svace_res_dir, cwe_num_list, warnings_list["svace"])
 
 svace_info.save_info(info_path["svace"])
@@ -24,9 +24,9 @@ juliet_info.save_info(info_path["juliet"])
 # INFO GENERATION PART END
 # COMPARISON GENERATION PART START
 
-svace_info = Info()
+svace_info = AnalyzerInfo()
 svace_info.load_info(info_path["svace"])
-juliet_info = Info()
+juliet_info = AnalyzerInfo()
 juliet_info.load_info(info_path["juliet"])
 
 comparison_list = []

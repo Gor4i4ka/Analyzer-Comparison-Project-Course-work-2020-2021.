@@ -28,7 +28,7 @@ def list_subtraction(lst1: list, lst2: list):
 
     return result_list
 
-#print(list_subtraction([[1, 4], 2, 3, 4, 5, 2], [3, [1, 4], 5, 2]))
+
 def dump_ast(node: clang.cindex.Cursor, ident=""):
     print(ident + str(node.kind))
 
@@ -41,6 +41,7 @@ def replace_at_home(filename: str, at_home=False):
         return filename
     home_path = '/home/gorchichka/'
     return home_path + filename[11:]
+
 
 def juliet_shorten(string: str):
 

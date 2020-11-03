@@ -1,6 +1,6 @@
 from allLibs import *
 from projectLib.Comparison import Comparison
-from projectLib.Info import Info
+from projectLib.AnalyzerInfo import AnalyzerInfo
 from projectLib.ProjectConfig import *
 
 # juliet_res_dir = juliet_res_dir

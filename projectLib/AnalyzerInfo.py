@@ -7,16 +7,24 @@ import re
 
 # Internal imports
 from projectLib.Common import save_list, load_list, print_list, juliet_shorten, remove_parent_dirs, find_in_juliet
+from projectLib.ErrorInfo import ErrorInfo
+from projectLib.FileInfo import FileInfo
 
 
-class Info:
+class AnalyzerInfo:
 
     def __init__(self):
         self.analyzer_name = ""
         self.info = []
         self.info_type = ""
 
-    def mine_info(self, analyzer_name, xml_path, dir_list, defect_type_list, output_mode="combined"):
+    def append(self, element):
+        self.info.append(element)
+
+    def remove(self, value):
+        self.info.remove(value)
+
+    def mine_info(self, analyzer_name, xml_path, dir_list, defect_type_list, info_type="FileInfo"):
 
         # File check re expr
         re_expr = ""
@@ -48,26 +56,26 @@ class Info:
         # PostProcess analyzer's output
         analyzer_output.sort(key=itemgetter(0))
 
-        if output_mode == "separated":
-            self.__separated_postproc(analyzer_output)
+        if info_type == "ErrorInfo":
+            self.__error_info_postproc(analyzer_output)
             return 0
-        elif output_mode == "combined":
-            self.__combined_postproc(analyzer_output)
+        elif info_type == "FileInfo":
+            self.__file_info_postproc(analyzer_output)
             return 0
         else:
-            print("NO SUCH OUTPUT MODE")
+            print("NO SUCH INFO MODE")
             return -1
 
-    def save_info(self, path):
-        save_list(self.analyzer_name, path + "/analyzer_name.data")
-        save_list(self.info, path + "/info.data")
-        save_list(self.info_type, path + "/info_type.data")
+    def save_info(self, path, info_ind):
+        save_list(self.analyzer_name, path + "/inf_analyzer_name_ind" + str(info_ind) + ".data")
+        save_list(self.info, path + "/inf_info_ind" + str(info_ind) + ".data")
+        save_list(self.info_type, path + "/inf_info_type_ind" + str(info_ind) + ".data")
         return 0
 
-    def load_info(self, path):
-        self.analyzer_name = load_list(path + "/analyzer_name.data")
-        self.info = load_list(path + "/info.data")
-        self.info_type = load_list(path + "/info_type.data")
+    def load_info(self, path, info_ind):
+        self.analyzer_name = load_list(path + "/inf_analyzer_name_ind" + str(info_ind) + ".data")
+        self.info = load_list(path + "/inf_info_ind" + str(info_ind) + ".data")
+        self.info_type = load_list(path + "/inf_info_type_ind" + str(info_ind) + ".data")
         return 0
 
     def print_info(self):
@@ -76,16 +84,18 @@ class Info:
 
     def count_warnings(self):
         warning_list = []
-        for file in self.info:
-            for el in file[2]:
-                in_list = False
-                for warn in warning_list:
-                    if el == warn[0]:
-                        warn[1] += 1
-                        in_list = True
-                        break
-                if not in_list:
-                    warning_list.append([el, 1])
+        if self.info_type == "FileInfo":
+            for file in self.info:
+                for error in file:
+                    in_list = False
+                    for warning in warning_list:
+                        if error.type == warning[0]:
+                            warning[1] += 1
+                            in_list = True
+                            break
+                    if not in_list:
+                        warning_list.append([error.type, 1])
+
         return warning_list
 
     def __svace_mine(self, re_expr, manifest_soup, defect_type_list):
@@ -163,23 +173,22 @@ class Info:
                     result_list.append(file)
         return result_list
 
-    def __combined_postproc(self, analyzer_output):
-        self.info_type = "combined"
+    def __file_info_postproc(self, analyzer_output):
+        self.info_type = "FileInfo"
 
         for el in analyzer_output:
             if len(self.info) == 0 or el[0] != self.info[-1][0]:
-                self.info.append([el[0], [el[1]], [el[2]]])
+                self.append(FileInfo(file=el[0], errors=[]))
             else:
-                self.info[-1][1].append(el[1])
-                self.info[-1][2].append(el[2])
+                self.info[-1].append(ErrorInfo(lines=el[1], type=el[2]))
 
         return 0
 
-    def __separated_postproc(self, analyzer_output):
-        self.info_type = "separated"
+    def __error_info_postproc(self, analyzer_output):
+        self.info_type = "ErrorInfo"
 
         for el in analyzer_output:
-            self.info.append(el)
+            self.append(ErrorInfo(file=el[0], lines=el[1], type=el[2]))
 
         return 0
 

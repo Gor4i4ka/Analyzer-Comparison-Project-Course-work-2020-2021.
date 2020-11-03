@@ -7,7 +7,7 @@ import clang.cindex as ci
 # Internal imports
 from projectLib.Common import srch_list_ind, replace_at_home, dump_ast
 from projectLib.Comparison import Comparison
-from projectLib.Info import Info
+from projectLib.AnalyzerInfo import AnalyzerInfo
 
 
 class Heuristic:
@@ -20,7 +20,7 @@ class Heuristic:
         self.heuristic_params = heuristic_params
         return
 
-    def compare_info_with_heuristic(self, analyzer1_info: Info, analyzer2_info: Info):
+    def compare_info_with_heuristic(self, analyzer1_info: AnalyzerInfo, analyzer2_info: AnalyzerInfo):
 
         if self.heuristic_name == "lines":
             return self.__lines(analyzer1_info, analyzer2_info)
@@ -31,7 +31,7 @@ class Heuristic:
         print("NO SUCH HEURISTIC")
         return -1
 
-    def __lines(self, analyzer1_info: Info, analyzer2_info: Info):
+    def __lines(self, analyzer1_info: AnalyzerInfo, analyzer2_info: AnalyzerInfo):
 
         if analyzer1_info.info_type != "combined" or analyzer2_info.info_type != "combined":
             print("WRONG INFO TYPE FOR EURISTICS LINES")
@@ -99,7 +99,7 @@ class Heuristic:
             self.__subfunc_search(c, lst)
         return
 
-    def __same_syntax_construct(self, analyzer1_info: Info, analyzer2_info: Info):
+    def __same_syntax_construct(self, analyzer1_info: AnalyzerInfo, analyzer2_info: AnalyzerInfo):
 
         if analyzer1_info.info_type != "combined" or analyzer2_info.info_type != "combined":
             print("WRONG INFO TYPE FOR EURISTICS LINES")

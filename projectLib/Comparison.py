@@ -7,51 +7,55 @@ import clang.cindex
 
 # Internal imports
 from projectLib.Common import srch_list_ind, save_list, load_list, print_numpy, dump_ast
-from projectLib.Info import Info
+from projectLib.AnalyzerInfo import AnalyzerInfo
 from projectLib.ProjectConfig import type_groups
 
 
 class Comparison:
 
-    def __init__(self):
+    def __init__(self,
+                 analyzer1_info: AnalyzerInfo=None,
+                 analyzer2_info: AnalyzerInfo=None):
+
         self.name_catalog_an1 = []
         self.name_catalog_an2 = []
         self.stat_matrix = None
-        self.error_list_an1 = []
-        self.error_list_an2 = []
-        self.error_list_both = []
+
+        self.analyzer1_info = analyzer1_info
+        self.analyzer2_info = analyzer2_info
 
         self.analyzer1_name = ""
         self.analyzer2_name = ""
 
     def comparison_copy(self, orig):
-        self.name_catalog_an1 = orig.name_catalog_an1
-        self.name_catalog_an2 = orig.name_catalog_an2
-        self.stat_matrix = orig.stat_matrix
-        self.error_list_an1 = orig.error_list_an1
-        self.error_list_an2 = orig.error_list_an2
-        self.error_list_both = orig.error_list_both
+        self.name_catalog_an1 = copy.deepcopy(orig.name_catalog_an1)
+        self.name_catalog_an2 = copy.deepcopy(orig.name_catalog_an2)
+        self.stat_matrix = copy.deepcopy(orig.stat_matrix)
 
-        self.analyzer1_name = orig.analyzer1_name
-        self.analyzer2_name = orig.analyzer2_name
+        self.analyzer1_info = copy.deepcopy(orig.analyzer1_info)
+        self.analyzer2_info = copy.deepcopy(orig.analyzer2_info)
+        # self.error_list_an1 = orig.error_list_an1
+        # self.error_list_an2 = orig.error_list_an2
+        # self.error_list_both = orig.error_list_both
+
+        self.analyzer1_name = copy.deepcopy(orig.analyzer1_name)
+        self.analyzer2_name = copy.deepcopy(orig.analyzer2_name)
 
     def save_comparison(self, res_dir, comparison_id):
 
-        name_catalog_an1_path = res_dir + "/name_catalog_an1_ind" + str(comparison_id) + ".data"
-        name_catalog_an2_path = res_dir + "/name_catalog_an2_ind" + str(comparison_id) + ".data"
-        stat_matrix_path = res_dir + "/stat_matrix" + str(comparison_id) + ".npy"
-        error_list_an1_path = res_dir + "/error_list_an1_path_ind" + str(comparison_id) + ".data"
-        error_list_an2_path = res_dir + "/error_list_an2_ind" + str(comparison_id) + ".data"
-        error_list_both_path = res_dir + "/error_list_both_ind" + str(comparison_id) + ".data"
-        analyzer1_name_path = res_dir + "/analyzer1_name_ind" + str(comparison_id) + ".data"
-        analyzer2_name_path = res_dir + "/analyzer2_name_ind" + str(comparison_id) + ".data"
+        name_catalog_an1_path = res_dir + "/cmp_name_catalog_an1_ind" + str(comparison_id) + ".data"
+        name_catalog_an2_path = res_dir + "/cmp_name_catalog_an2_ind" + str(comparison_id) + ".data"
+        stat_matrix_path = res_dir + "/cmp_stat_matrix" + str(comparison_id) + ".npy"
+        analyzer1_info_path = res_dir + "/cmp_analyzer1_info_path_ind" + str(comparison_id) + ".data"
+        analyzer2_info_path = res_dir + "/cmp_analyzer2_info_path_ind" + str(comparison_id) + ".data"
+        analyzer1_name_path = res_dir + "/cmp_analyzer1_name_ind" + str(comparison_id) + ".data"
+        analyzer2_name_path = res_dir + "/cmp_analyzer2_name_ind" + str(comparison_id) + ".data"
 
         save_list(self.name_catalog_an1, name_catalog_an1_path)
         save_list(self.name_catalog_an2, name_catalog_an2_path)
         np.save(stat_matrix_path, self.stat_matrix)
-        save_list(self.error_list_an1, error_list_an1_path)
-        save_list(self.error_list_an2, error_list_an2_path)
-        save_list(self.error_list_both, error_list_both_path)
+        self.analyzer1_info.save_info(analyzer1_info_path, comparison_id)
+        self.analyzer2_info.save_info(analyzer2_info_path, comparison_id)
         save_list(self.analyzer1_name, analyzer1_name_path)
         save_list(self.analyzer2_name, analyzer2_name_path)
 
@@ -59,28 +63,27 @@ class Comparison:
 
     def load_comparison(self, res_dir, comparison_id):
 
-        name_catalog_an1_path = res_dir + "/name_catalog_an1_ind" + str(comparison_id) + ".data"
-        name_catalog_an2_path = res_dir + "/name_catalog_an2_ind" + str(comparison_id) + ".data"
-        stat_matrix_path = res_dir + "/stat_matrix" + str(comparison_id) + ".npy"
-        error_list_an1_path = res_dir + "/error_list_an1_path_ind" + str(comparison_id) + ".data"
-        error_list_an2_path = res_dir + "/error_list_an2_ind" + str(comparison_id) + ".data"
-        error_list_both_path = res_dir + "/error_list_both_ind" + str(comparison_id) + ".data"
-        analyzer1_name_path = res_dir + "/analyzer1_name_ind" + str(comparison_id) + ".data"
-        analyzer2_name_path = res_dir + "/analyzer2_name_ind" + str(comparison_id) + ".data"
+        name_catalog_an1_path = res_dir + "/cmp_name_catalog_an1_ind" + str(comparison_id) + ".data"
+        name_catalog_an2_path = res_dir + "/cmp_name_catalog_an2_ind" + str(comparison_id) + ".data"
+        stat_matrix_path = res_dir + "/cmp_stat_matrix" + str(comparison_id) + ".npy"
+        analyzer1_info_path = res_dir + "/cmp_analyzer1_info_path_ind" + str(comparison_id) + ".data"
+        analyzer2_info_path = res_dir + "/cmp_analyzer2_info_path_ind" + str(comparison_id) + ".data"
+        analyzer1_name_path = res_dir + "/cmp_analyzer1_name_ind" + str(comparison_id) + ".data"
+        analyzer2_name_path = res_dir + "/cmp_analyzer2_name_ind" + str(comparison_id) + ".data"
 
         self.name_catalog_an1 = load_list(name_catalog_an1_path)
         self.name_catalog_an2 = load_list(name_catalog_an2_path)
         self.stat_matrix = np.load(stat_matrix_path)
-        self.error_list_an1 = load_list(error_list_an1_path)
-        self.error_list_an2 = load_list(error_list_an2_path)
-        self.error_list_both = load_list(error_list_both_path)
+        self.analyzer1_info.load_info(analyzer1_info_path, comparison_id)
+        self.analyzer2_info.load_info(analyzer2_info_path, comparison_id)
         self.analyzer1_name = load_list(analyzer1_name_path)
         self.analyzer2_name = load_list(analyzer2_name_path)
 
         return 0
 
     def group_comparison(self, an1_type_groups, an2_type_groups):
-        result_comparison = Comparison()
+        result_comparison = Comparison(copy.deepcopy(self.analyzer1_info),
+                                       copy.deepcopy(self.analyzer2_info))
 
         result_comparison.stat_matrix = np.zeros((self.stat_matrix.shape[0] - an1_type_groups["TOTAL_COMPRESSION"],
                                                   self.stat_matrix.shape[1] - an2_type_groups["TOTAL_COMPRESSION"]),
@@ -323,19 +326,11 @@ class Comparison:
             ind = srch_list_ind(result_comparison.name_catalog_an2, er_an2[2])
             result_comparison.stat_matrix[-2, ind] += 1
 
-        cur_file_ind = 0
         for er_both1 in self.error_list_both:
-            er_both1_found = False
             for er_both2 in another_comparison.error_list_both:
                 if er_both1[0] == er_both2[0]:
 
-                    if er_both1[1] == er_both2[1] and \
-                        er_both1[3] == er_both2[3]:
-
                     result_comparison.error_list_both.append(er_both1)
-                    # ind1 = srch_list_ind(result_comparison.name_catalog_an1, er_both1[2])
-                    # ind2 = srch_list_ind(result_comparison.name_catalog_an2, er_both1[3])
-                    # result_comparison.stat_matrix[ind1][ind2] += 1
                     break
 
         for er_both1 in self.error_list_both:
@@ -355,7 +350,7 @@ class Comparison:
 
         return result_comparison
 
-    def fill_for_euristics(self, analyzer1_info: Info, analyzer2_info: Info):
+    def fill_for_euristics(self, analyzer1_info: AnalyzerInfo, analyzer2_info: AnalyzerInfo):
 
         self.name_catalog_an1 = [warn[0] for warn in analyzer1_info.count_warnings()]
         self.name_catalog_an2 = [warn[0] for warn in analyzer2_info.count_warnings()]
@@ -381,7 +376,7 @@ class Comparison:
 
         return 0
 
-    def compare_list_generation(self, analyzer1_info: Info, analyzer2_info: Info):
+    def compare_list_generation(self, analyzer1_info: AnalyzerInfo, analyzer2_info: AnalyzerInfo):
 
         analyzer1_info_field = analyzer1_info.info
         analyzer2_info_field = analyzer2_info.info

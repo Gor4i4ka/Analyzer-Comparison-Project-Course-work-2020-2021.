@@ -2,7 +2,7 @@ import copy
 
 # Internal imports
 from projectLib.Comparison import Comparison
-from projectLib.Info import Info
+from projectLib.AnalyzerInfo import AnalyzerInfo
 from projectLib.ProjectConfig import *
 from projectLib.Heuristic import Heuristic
 

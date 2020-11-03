@@ -4,7 +4,7 @@ import typing
 import sys
 
 from projectLib.Comparison import Comparison
-from projectLib.Info import Info
+from projectLib.AnalyzerInfo import AnalyzerInfo
 
 index = clang.cindex.Index.create()
 translation_unit = index.parse('/home/gorchichka/cplus/dummy.cpp', args=['-std=c++17'])
@@ -42,7 +42,7 @@ def find_if(node: clang.cindex.Cursor, mode):
         find_if(c, False)
 
 
-def same_syntax_construction(analyzer1_info: Info, analyzer2_info: Info, eur_params: dict):
+def same_syntax_construction(analyzer1_info: AnalyzerInfo, analyzer2_info: AnalyzerInfo, eur_params: dict):
 
     if analyzer1_info.info_type != "combined" or analyzer2_info.info_type != "combined":
         print("WRONG INFO TYPE FOR EURISTICS LINES")
