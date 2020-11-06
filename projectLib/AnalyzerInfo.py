@@ -4,25 +4,43 @@ from operator import itemgetter
 
 import bs4
 import re
+import copy
 
 # Internal imports
 from projectLib.Common import save_list, load_list, print_list, juliet_shorten, remove_parent_dirs, find_in_juliet
 from projectLib.ErrorInfo import ErrorInfo
 from projectLib.FileInfo import FileInfo
 
-
 class AnalyzerInfo:
 
-    def __init__(self):
-        self.analyzer_name = ""
-        self.info = []
-        self.info_type = ""
+    def __init__(self, analyzer_name="", info=[], info_type=""):
+        self.analyzer_name = copy.deepcopy(analyzer_name)
+        self.info = copy.deepcopy(info)
+        self.info_type = copy.deepcopy(info_type)
 
     def append(self, element):
-        self.info.append(element)
+        self.info.append(copy.deepcopy(element))
 
     def remove(self, value):
         self.info.remove(value)
+
+    def search_by_file(self, filename: str):
+        if self.info_type == "FileInfo":
+            for file in self.info:
+                if file.file == filename:
+                    return file
+            return -1
+        if self.info_type == "ErrorInfo":
+            error_list = []
+            for error in self.info:
+                if error.file == filename:
+                    error_list.append(error)
+
+            if len(error_list) == 0:
+                return -1
+            return error_list
+        print("NO SUCH info_type")
+        return -2
 
     def mine_info(self, analyzer_name, xml_path, dir_list, defect_type_list, info_type="FileInfo"):
 
@@ -192,3 +210,12 @@ class AnalyzerInfo:
 
         return 0
 
+    def __str__(self):
+        return self.analyzer_name + ": " + self.info_type
+
+    def __getitem__(self, item):
+        return self.info[item]
+
+    def __setitem__(self, key, value):
+        self.info[key] = value
+        return 0
