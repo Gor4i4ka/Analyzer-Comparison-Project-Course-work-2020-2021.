@@ -5,6 +5,7 @@ import clang
 import clang.cindex as ci
 
 # Internal imports
+from projectLib.Binding import Binding
 from projectLib.Common import srch_list_ind, replace_at_home, dump_ast
 from projectLib.Comparison import Comparison
 from projectLib.AnalyzerInfo import AnalyzerInfo
@@ -31,7 +32,48 @@ class Heuristic:
         print("NO SUCH HEURISTIC")
         return -1
 
+    def __subproc_lines_check_intersect(self, lines_list_an1, lines_list_an2, distance):
+
+        for line1 in lines_list_an1:
+            for line2 in lines_list_an2:
+                if abs(line1 - line2) <= distance:
+                    return True
+        return False
+
     def __lines(self, analyzer1_info: AnalyzerInfo, analyzer2_info: AnalyzerInfo):
+
+        result_comparison = Comparison()
+        result_comparison.heur_fill_for_heuristics(analyzer1_info, analyzer2_info)
+
+        if not result_comparison.check_both_FileInfo_format():
+            return -1
+
+        # FileInfo actions BEGIN
+
+        for file_info_an1 in analyzer1_info.info:
+            file_info_an2 = analyzer2_info.search_by_file(file_info_an1.file)
+
+            if file_info_an2 == -1:
+                continue
+
+            for error_info_an1_ind in range(len(file_info_an1.errors)):
+                for error_info_an2_ind in range(len(file_info_an2.errors)):
+                    if self.__subproc_lines_check_intersect(file_info_an1[error_info_an1_ind].lines,
+                                                            file_info_an2[error_info_an2_ind].lines,
+                                                            self.heuristic_params["distance"]):
+                        file_an1_in_result_comparison = result_comparison.analyzer1_info.search_by_file(file_info_an1.file)
+                        file_an2_in_result_comparison = result_comparison.analyzer2_info.search_by_file(file_info_an2.file)
+
+                        file_an1_in_result_comparison[error_info_an1_ind].bindings.append(Binding(ind=error_info_an2_ind))
+                        file_an2_in_result_comparison[error_info_an2_ind].bindings.append(
+                            Binding(ind=error_info_an1_ind))
+
+        result_comparison.stat_matrix_fill_by_bindings()
+                        
+        # FileInfo actions END
+        return result_comparison
+
+    def __lines_old(self, analyzer1_info: AnalyzerInfo, analyzer2_info: AnalyzerInfo):
 
         if analyzer1_info.info_type != "combined" or analyzer2_info.info_type != "combined":
             print("WRONG INFO TYPE FOR EURISTICS LINES")
@@ -99,7 +141,7 @@ class Heuristic:
             self.__subfunc_search(c, lst)
         return
 
-    def __same_syntax_construct(self, analyzer1_info: AnalyzerInfo, analyzer2_info: AnalyzerInfo):
+    def __same_syntax_construct_old(self, analyzer1_info: AnalyzerInfo, analyzer2_info: AnalyzerInfo):
 
         if analyzer1_info.info_type != "combined" or analyzer2_info.info_type != "combined":
             print("WRONG INFO TYPE FOR EURISTICS LINES")

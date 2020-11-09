@@ -68,9 +68,6 @@ class AnalyzerInfo:
             print("NO SUCH ANALYZER")
             return -1
 
-        for el in analyzer_output:
-            if type(el[0]) == type(0):
-                print(el[0])
         # PostProcess analyzer's output
         analyzer_output.sort(key=itemgetter(0))
 
@@ -97,8 +94,15 @@ class AnalyzerInfo:
         return 0
 
     def print_info(self):
-        print_list(self.info)
-        return 0
+        if self.info_type == "FileInfo":
+
+            for file_info in self.info:
+                print(file_info)
+                for error_info in file_info.errors:
+                    print(error_info)
+            return 0
+        print("NO SUCH info_type")
+        return -1
 
     def count_warnings(self):
         warning_list = []
@@ -163,6 +167,7 @@ class AnalyzerInfo:
         testcases = manifest_soup.find_all("testcase")
 
         for case in testcases:
+
             testcase_list = []
             border = 0
             found = case.find_all(attrs={"path": re.compile(re_expr)})
@@ -172,11 +177,7 @@ class AnalyzerInfo:
                 found_file = find_in_juliet(file["path"])
                 if found_file == -1:
                     continue
-                # if type(find_in_juliet(file["path"])) == type(0):
-                #     print(file["path"])
-                #     print(find_in_juliet(file["path"], flag=True))
-                # else:
-                #     print("BINGO")
+
                 testcase_list.append([found_file, [], juliet_shorten(file["path"])])
                 flaws = file.find_all("flaw")
                 for flaw in flaws:
@@ -189,14 +190,16 @@ class AnalyzerInfo:
             for file in testcase_list:
                 if len(file[1]):
                     result_list.append(file)
+
         return result_list
 
     def __file_info_postproc(self, analyzer_output):
         self.info_type = "FileInfo"
 
         for el in analyzer_output:
-            if len(self.info) == 0 or el[0] != self.info[-1][0]:
-                self.append(FileInfo(file=el[0], errors=[]))
+
+            if len(self.info) == 0 or el[0] != self.info[-1].file:
+                self.append(FileInfo(file=el[0], errors=[ErrorInfo(lines=el[1], type=el[2])]))
             else:
                 self.info[-1].append(ErrorInfo(lines=el[1], type=el[2]))
 

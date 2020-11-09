@@ -17,8 +17,8 @@ from projectLib.Binding import Binding
 class Comparison:
 
     def __init__(self,
-                 analyzer1_info: AnalyzerInfo=None,
-                 analyzer2_info: AnalyzerInfo=None):
+                 analyzer1_info: AnalyzerInfo=AnalyzerInfo(),
+                 analyzer2_info: AnalyzerInfo=AnalyzerInfo()):
 
         self.name_catalog_an1 = []
         self.name_catalog_an2 = []
@@ -32,6 +32,7 @@ class Comparison:
            self.analyzer2_info.info_type != "FileInfo":
             print("GROUP COMPARISON ONLY SUPPORTED FOR FileInfo info_type")
             return False
+        return True
 
     def get_errors_only_in_analyzer_num(self, analyzer_num: int):
         if not self.check_both_FileInfo_format():
@@ -105,8 +106,8 @@ class Comparison:
         name_catalog_an1_path = res_dir + "/cmp_name_catalog_an1_ind" + str(comparison_id) + ".data"
         name_catalog_an2_path = res_dir + "/cmp_name_catalog_an2_ind" + str(comparison_id) + ".data"
         stat_matrix_path = res_dir + "/cmp_stat_matrix" + str(comparison_id) + ".npy"
-        analyzer1_info_path = res_dir + "/cmp_analyzer1_info_path_ind" + str(comparison_id) + ".data"
-        analyzer2_info_path = res_dir + "/cmp_analyzer2_info_path_ind" + str(comparison_id) + ".data"
+        analyzer1_info_path = res_dir
+        analyzer2_info_path = res_dir
 
         save_list(self.name_catalog_an1, name_catalog_an1_path)
         save_list(self.name_catalog_an2, name_catalog_an2_path)
@@ -121,8 +122,8 @@ class Comparison:
         name_catalog_an1_path = res_dir + "/cmp_name_catalog_an1_ind" + str(comparison_id) + ".data"
         name_catalog_an2_path = res_dir + "/cmp_name_catalog_an2_ind" + str(comparison_id) + ".data"
         stat_matrix_path = res_dir + "/cmp_stat_matrix" + str(comparison_id) + ".npy"
-        analyzer1_info_path = res_dir + "/cmp_analyzer1_info_path_ind" + str(comparison_id) + ".data"
-        analyzer2_info_path = res_dir + "/cmp_analyzer2_info_path_ind" + str(comparison_id) + ".data"
+        analyzer1_info_path = res_dir
+        analyzer2_info_path = res_dir
 
         self.name_catalog_an1 = load_list(name_catalog_an1_path)
         self.name_catalog_an2 = load_list(name_catalog_an2_path)
@@ -253,6 +254,55 @@ class Comparison:
         print("NO SUCH MODE")
         return -1
 
+    def stat_matrix_fill_by_bindings(self):
+
+        for file_info_an1 in self.analyzer1_info.info:
+            for error_info_an1 in file_info_an1:
+
+                name_catalog1_ind = srch_list_ind(self.name_catalog_an1, error_info_an1.type)
+                self.stat_matrix[name_catalog1_ind, -1] += 1
+
+                if not error_info_an1.has_bindings():
+                    name_catalog1_ind = srch_list_ind(self.name_catalog_an1, error_info_an1.type)
+                    self.stat_matrix[name_catalog1_ind, -2] += 1
+
+                for binding in error_info_an1.bindings:
+                    filename_to_search = file_info_an1.file
+                    if binding.file:
+                        filename_to_search = binding.file
+                    file_info_an2 = self.analyzer2_info.search_by_file(filename_to_search)
+                    error_info_an2 = file_info_an2[binding.ind]
+
+                    name_catalog2_ind = srch_list_ind(self.name_catalog_an2, error_info_an2.type)
+
+                    self.stat_matrix[name_catalog1_ind, name_catalog2_ind] += 1
+
+        for file_info_an2 in self.analyzer2_info.info:
+            for error_info_an2 in file_info_an2:
+
+                name_catalog2_ind = srch_list_ind(self.name_catalog_an2, error_info_an2.type)
+                self.stat_matrix[-1, name_catalog2_ind] += 1
+
+                if not error_info_an2.has_bindings():
+                    self.stat_matrix[-2, name_catalog2_ind] += 1
+
+    def __subproc_fill_for_set_operations(self):
+        result_comparison = Comparison()
+        result_comparison.name_catalog_an1 = copy.deepcopy(self.name_catalog_an1)
+        result_comparison.name_catalog_an2 = copy.deepcopy(self.name_catalog_an2)
+
+        result_comparison.stat_matrix = np.zeros(self.stat_matrix.shape, dtype='int')
+        result_comparison.stat_matrix[-1, :] = self.stat_matrix[-1, :]
+        result_comparison.stat_matrix[:, -1] = self.stat_matrix[:, -1]
+        result_comparison.stat_matrix[-2, -2] = -1
+
+        result_comparison.analyzer1_info = AnalyzerInfo(analyzer_name=self.analyzer1_info.analyzer_name,
+                                                        info_type=self.analyzer1_info.info_type)
+        result_comparison.analyzer2_info = AnalyzerInfo(analyzer_name=self.analyzer2_info.analyzer_name,
+                                                        info_type=self.analyzer2_info.info_type)
+
+        return result_comparison
+
     def __subproc_comparison_union_form_info(self, another_comparison, result_comparison, analyzer_num):
         if analyzer_num == 1:
             self_analyzer_info = self.analyzer1_info
@@ -283,48 +333,14 @@ class Comparison:
         if not self.check_both_FileInfo_format():
             return -1
 
-        result_comparison = Comparison()
-        result_comparison.name_catalog_an1 = copy.deepcopy(self.name_catalog_an1)
-        result_comparison.name_catalog_an2 = copy.deepcopy(self.name_catalog_an2)
+        result_comparison = self.__subproc_fill_for_set_operations()
 
-        result_comparison.stat_matrix = np.zeros(self.stat_matrix.shape, dtype='int')
-        result_comparison.stat_matrix[-1, :] = self.stat_matrix[-1, :]
-        result_comparison.stat_matrix[:, -1] = self.stat_matrix[:, -1]
-        result_comparison.stat_matrix[-2, -2] = -1
-
-        result_comparison.analyzer1_info = AnalyzerInfo(analyzer_name=self.analyzer1_info.analyzer_name,
-                                                        info_type=self.analyzer1_info.info_type)
-        result_comparison.analyzer2_info = AnalyzerInfo(analyzer_name=self.analyzer2_info.analyzer_name,
-                                                        info_type=self.analyzer2_info.info_type)
         # FileInfo actions BEGIN
 
         self.__subproc_comparison_union_form_info(another_comparison, result_comparison, 1)
         self.__subproc_comparison_union_form_info(another_comparison, result_comparison, 2)
 
-        for file_info_an1 in result_comparison.analyzer1_info.info:
-            for error_info_an1 in file_info_an1:
-                if not error_info_an1.has_bindings():
-                    name_catalog1_ind = srch_list_ind(self.name_catalog_an1, error_info_an1.type)
-                    result_comparison.stat_matrix[name_catalog1_ind, -2] += 1
-
-                for binding in error_info_an1.bindings:
-                    filename_to_search = file_info_an1.file
-                    if binding.file:
-                        filename_to_search = binding.file
-                    file_info_an2 = result_comparison.analyzer2_info.search_by_file(filename_to_search)
-                    error_info_an2 = file_info_an2[binding.ind]
-
-                    name_catalog1_ind = srch_list_ind(self.name_catalog_an1, error_info_an1.type)
-                    name_catalog2_ind = srch_list_ind(self.name_catalog_an2, error_info_an2.type)
-
-                    result_comparison.stat_matrix[name_catalog1_ind, name_catalog2_ind] += 1
-
-        for file_info_an2 in result_comparison.analyzer2_info.info:
-            for error_info_an2 in file_info_an2:
-                if not error_info_an2.has_bindings():
-                    name_catalog2_ind = srch_list_ind(self.name_catalog_an2, error_info_an2.type)
-                    result_comparison.stat_matrix[-2, name_catalog2_ind] += 1
-
+        result_comparison.stat_matrix_fill_by_bindings()
         # FileInfo actions END
 
         return result_comparison
@@ -347,80 +363,87 @@ class Comparison:
                 result_list_an2.append([error[1], error[3]])
         return result_list_an1, result_list_an2
 
+    def __subproc_comparison_substraction_form_info(self, another_comparison, result_comparison, analyzer_num):
+        if analyzer_num == 1:
+            self_analyzer_info = self.analyzer1_info
+            another_comparison_analyzer_info = another_comparison.analyzer1_info
+        else:
+            self_analyzer_info = self.analyzer2_info
+            another_comparison_analyzer_info = another_comparison.analyzer2_info
+
+        for file_info_cmp1 in self_analyzer_info.info:
+            file_info_to_add = FileInfo(file=file_info_cmp1.file)
+            file_info_cmp2 = another_comparison_analyzer_info.search_by_file(file_info_cmp1.file)
+            for error_info_ind in range(len(file_info_cmp1.errors)):
+                bindings_to_add = []
+                for binding_cmp1 in file_info_cmp1[error_info_ind].bindings:
+                    if binding_cmp1 not in file_info_cmp2[error_info_ind].bindings:
+                        bindings_to_add.append(binding_cmp1)
+                file_info_to_add.append(ErrorInfo(lines=file_info_cmp1[error_info_ind].lines,
+                                                  type=file_info_cmp1[error_info_ind].type,
+                                                  bindings=bindings_to_add))
+
+            if analyzer_num == 1:
+                result_comparison.analyzer1_info.append(file_info_to_add)
+            else:
+                result_comparison.analyzer2_info.append(file_info_to_add)
+
     def comparison_substraction(self, another_comparison):
-        result_comparison = Comparison()
-        result_comparison.name_catalog_an1 = copy.deepcopy(self.name_catalog_an1)
-        result_comparison.name_catalog_an2 = copy.deepcopy(self.name_catalog_an2)
+        if not self.check_both_FileInfo_format():
+            return -1
 
-        result_comparison.error_list_both = copy.deepcopy(self.error_list_both)
-        result_comparison.error_list_an1 = copy.deepcopy(self.error_list_an1)
-        result_comparison.error_list_an2 = copy.deepcopy(self.error_list_an2)
+        result_comparison = self.__subproc_fill_for_set_operations()
 
-        result_comparison.stat_matrix = np.zeros(self.stat_matrix.shape, dtype='int')
-        result_comparison.stat_matrix[-1, :] = self.stat_matrix[-1, :]
-        result_comparison.stat_matrix[:, -1] = self.stat_matrix[:, -1]
-        result_comparison.stat_matrix[-2, -2] = -1
+        # FileInfo actions BEGIN
+        self.__subproc_comparison_substraction_form_info(another_comparison, result_comparison, analyzer_num=1)
+        self.__subproc_comparison_substraction_form_info(another_comparison, result_comparison, analyzer_num=2)
 
-        for er_both in another_comparison.error_list_both:
-            if er_both in result_comparison.error_list_both:
-                result_comparison.error_list_both.remove(er_both)
-
-    def comparison_intersection(self, another_comparison):
-        result_comparison = Comparison()
-        result_comparison.name_catalog_an1 = copy.deepcopy(self.name_catalog_an1)
-        result_comparison.name_catalog_an2 = copy.deepcopy(self.name_catalog_an2)
-
-        result_comparison.error_list_an1 = copy.deepcopy(self.error_list_an1)
-        result_comparison.error_list_an2 = copy.deepcopy(self.error_list_an2)
-
-        result_comparison.stat_matrix = np.zeros(self.stat_matrix.shape, dtype='int')
-        result_comparison.stat_matrix[-1, :] = self.stat_matrix[-1, :]
-        result_comparison.stat_matrix[:, -1] = self.stat_matrix[:, -1]
-        result_comparison.stat_matrix[-2, -2] = -1
-
-        for er_an1 in another_comparison.error_list_an1:
-            if er_an1 not in result_comparison.error_list_an1:
-                result_comparison.error_list_an1.append(er_an1)
-        result_comparison.error_list_an1.sort(key=itemgetter(0))
-
-        for er_an1 in result_comparison.error_list_an1:
-            ind = srch_list_ind(result_comparison.name_catalog_an1, er_an1[2])
-            result_comparison.stat_matrix[ind, -2] += 1
-
-        for er_an2 in another_comparison.error_list_an2:
-            if er_an2 not in result_comparison.error_list_an2:
-                result_comparison.error_list_an2.append(er_an2)
-        result_comparison.error_list_an2.sort(key=itemgetter(0))
-
-        for er_an2 in result_comparison.error_list_an2:
-            ind = srch_list_ind(result_comparison.name_catalog_an2, er_an2[2])
-            result_comparison.stat_matrix[-2, ind] += 1
-
-        for er_both1 in self.error_list_both:
-            for er_both2 in another_comparison.error_list_both:
-                if er_both1[0] == er_both2[0]:
-
-                    result_comparison.error_list_both.append(er_both1)
-                    break
-
-        for er_both1 in self.error_list_both:
-            for er_both2 in another_comparison.error_list_both:
-                if er_both1 == er_both2:
-                    result_comparison.error_list_both.append(er_both1)
-                    # ind1 = srch_list_ind(result_comparison.name_catalog_an1, er_both1[2])
-                    # ind2 = srch_list_ind(result_comparison.name_catalog_an2, er_both1[3])
-                    # result_comparison.stat_matrix[ind1][ind2] += 1
-                    break
-        result_comparison.error_list_both.sort(key=itemgetter(0))
-
-        for er_both in result_comparison.error_list_both:
-            ind1 = srch_list_ind(result_comparison.name_catalog_an1, er_both[3])
-            ind2 = srch_list_ind(result_comparison.name_catalog_an2, er_both[4])
-            result_comparison.stat_matrix[ind1][ind2] += 1
+        result_comparison.stat_matrix_fill_by_bindings()
+        # FileInfo actions END
 
         return result_comparison
 
-    def fill_for_euristics(self, analyzer1_info: AnalyzerInfo, analyzer2_info: AnalyzerInfo):
+    def __subproc_comparison_intersection_form_info(self, another_comparison, result_comparison, analyzer_num):
+        if analyzer_num == 1:
+            self_analyzer_info = self.analyzer1_info
+            another_comparison_analyzer_info = another_comparison.analyzer1_info
+        else:
+            self_analyzer_info = self.analyzer2_info
+            another_comparison_analyzer_info = another_comparison.analyzer2_info
+
+        for file_info_cmp1 in self_analyzer_info.info:
+            file_info_to_add = FileInfo(file=file_info_cmp1.file)
+            file_info_cmp2 = another_comparison_analyzer_info.search_by_file(file_info_cmp1.file)
+            for error_info_ind in range(len(file_info_cmp1.errors)):
+                bindings_to_add = []
+                for binding_cmp1 in file_info_cmp1[error_info_ind].bindings:
+                    if binding_cmp1 in file_info_cmp2[error_info_ind].bindings:
+                        bindings_to_add.append(binding_cmp1)
+                file_info_to_add.append(ErrorInfo(lines=file_info_cmp1.errors[error_info_ind].lines,
+                                                  type=file_info_cmp1.errors[error_info_ind].type,
+                                                  bindings=bindings_to_add))
+            if analyzer_num == 1:
+                result_comparison.analyzer1_info.append(file_info_to_add)
+            else:
+                result_comparison.analyzer2_info.append(file_info_to_add)
+        return 0
+
+    def comparison_intersection(self, another_comparison):
+        if not self.check_both_FileInfo_format():
+            return -1
+
+        result_comparison = self.__subproc_fill_for_set_operations()
+
+        # FileInfo actions BEGIN
+        self.__subproc_comparison_intersection_form_info(another_comparison, result_comparison, analyzer_num=1)
+        self.__subproc_comparison_intersection_form_info(another_comparison, result_comparison, analyzer_num=2)
+
+        result_comparison.stat_matrix_fill_by_bindings()
+        # FileInfo actions END
+
+        return result_comparison
+
+    def heur_fill_for_heuristics(self, analyzer1_info: AnalyzerInfo, analyzer2_info: AnalyzerInfo):
 
         self.name_catalog_an1 = [warn[0] for warn in analyzer1_info.count_warnings()]
         self.name_catalog_an2 = [warn[0] for warn in analyzer2_info.count_warnings()]
@@ -437,66 +460,10 @@ class Comparison:
         self.stat_matrix[-2][-1] = -1
         self.stat_matrix[-2][-2] = -1
 
-        self.error_list_both = []
-        self.error_list_an1 = []
-        self.error_list_an2 = []
+        self.analyzer1_info = copy.deepcopy(analyzer1_info)
+        self.analyzer2_info = copy.deepcopy(analyzer2_info)
 
         return 0
-
-    def compare_list_generation(self, analyzer1_info: AnalyzerInfo, analyzer2_info: AnalyzerInfo):
-
-        analyzer1_info_field = analyzer1_info.info
-        analyzer2_info_field = analyzer2_info.info
-
-        cmp_list = []
-
-        found_counterpart_an2 = np.zeros((len(analyzer2_info_field)), dtype=np.bool)
-        for defect1_file_ind in range(len(analyzer1_info_field)):
-            found_counterpart_an1 = False
-
-            for err_ind in range(len(analyzer1_info_field[defect1_file_ind][2])):
-                self.stat_matrix[srch_list_ind(self.name_catalog_an1,
-                                               analyzer1_info_field[defect1_file_ind][2][err_ind])][-1] += 1
-
-            for defect2_file_ind in range(len(analyzer2_info_field)):
-                if analyzer1_info_field[defect1_file_ind][0] == analyzer2_info_field[defect2_file_ind][0]:
-                    cmp_list.append([analyzer1_info_field[defect1_file_ind][0],
-                                     analyzer1_info_field[defect1_file_ind][1],
-                                     analyzer2_info_field[defect2_file_ind][1],
-                                     analyzer1_info_field[defect1_file_ind][2],
-                                     analyzer2_info_field[defect2_file_ind][2]])
-
-                    found_counterpart_an1 = True
-                    found_counterpart_an2[defect2_file_ind] = True
-                    break
-
-            if not found_counterpart_an1:
-                for err_ind in range(len(analyzer1_info_field[defect1_file_ind][2])):
-                    self.stat_matrix[srch_list_ind(self.name_catalog_an1,
-                                                   analyzer1_info_field[defect1_file_ind][2][err_ind])][-2] += 1
-                    self.error_list_an1.append([analyzer1_info_field[defect1_file_ind][0],
-                                                analyzer1_info_field[defect1_file_ind][1][err_ind],
-                                                analyzer1_info_field[defect1_file_ind][2][err_ind]]
-                                                )
-
-        for defect2_file_ind2 in range(found_counterpart_an2.shape[0]):
-
-            for err_ind in range(len(analyzer2_info_field[defect2_file_ind2][2])):
-                ind2 = srch_list_ind(self.name_catalog_an2,
-                                     analyzer2_info_field[defect2_file_ind2][2][err_ind])
-                self.stat_matrix[-1][ind2] += 1
-
-            if not found_counterpart_an2[defect2_file_ind2]:
-                for err_ind in range(len(analyzer2_info_field[defect2_file_ind2][2])):
-                    ind2 = srch_list_ind(self.name_catalog_an2,
-                                         analyzer2_info_field[defect2_file_ind2][2][err_ind])
-                    self.stat_matrix[-2][ind2] += 1
-                    self.error_list_an2.append([analyzer2_info_field[defect2_file_ind2][0],
-                                                analyzer2_info_field[defect2_file_ind2][1][err_ind],
-                                                analyzer2_info_field[defect2_file_ind2][2][err_ind]]
-                                                )
-
-        return cmp_list
 
     def search_entities_in_lines(self, node: clang.cindex.Cursor, found_lines: list, result_set: set):
         #dump_ast(node)
@@ -520,15 +487,28 @@ class Comparison:
 
     def analyze_comparison_buffer_overflow(self):
 
+        if not self.check_both_FileInfo_format():
+            return -1
+
         list_buf_overflow_types_an1 = type_groups[self.analyzer1_info.analyzer_name]["Buffer_overflow"]
         list_buf_overflow_types_an2 = type_groups[self.analyzer2_info.analyzer_name]["Buffer_overflow"]
 
-        error_list_both_res = copy.deepcopy(self.error_list_both)
-        error_list_an1_res = []
-        error_list_an2_res = []
+        analyzer1_info_res = AnalyzerInfo(analyzer_name=self.analyzer1_info.analyzer_name,
+                                          info_type=self.analyzer1_info.info_type)
+        analyzer2_info_res = AnalyzerInfo(analyzer_name=self.analyzer2_info.analyzer_name,
+                                          info_type=self.analyzer2_info.info_type)
+
+    def analyze_comparison_buffer_overflow_old(self):
+
+        list_buf_overflow_types_an1 = type_groups[self.analyzer1_info.analyzer_name]["Buffer_overflow"]
+        list_buf_overflow_types_an2 = type_groups[self.analyzer2_info.analyzer_name]["Buffer_overflow"]
 
         found_corresponding_er_both_an1 = np.zeros((len(self.error_list_an1)), dtype=np.bool)
         found_corresponding_er_both_an2 = np.zeros((len(self.error_list_an2)), dtype=np.bool)
+
+        error_list_an1_res = []
+        error_list_an2_res = []
+        error_list_both_res = []
 
         for found_error_an1 in self.error_list_both:
             if found_error_an1[3] in list_buf_overflow_types_an1:
@@ -616,25 +596,4 @@ class Comparison:
 
         return
 
-    def get_list_by_type(self, type_list, mode, for_analyzer=1):
 
-        align = 1
-        er_list = None
-        result_list = []
-
-        if mode == "er1":
-            er_list = self.error_list_an1
-        if mode == "er2":
-            er_list = self.error_list_an2
-        if mode == "er_both":
-            er_list = self.error_list_both
-            align += 1
-        if not er_list:
-            print("NO SUCH ERROR LIST")
-            return -1
-
-        for error in er_list:
-            if error[align + for_analyzer] in type_list:
-                result_list.append(error)
-
-        return result_list
