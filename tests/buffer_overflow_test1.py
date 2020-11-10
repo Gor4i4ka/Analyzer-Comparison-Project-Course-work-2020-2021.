@@ -1,10 +1,6 @@
-import copy
-
 # Internal imports
-from projectLib.Comparison import Comparison
-from projectLib.AnalyzerInfo import AnalyzerInfo
+from projectLib.Classes.Comparison import Comparison
 from projectLib.ProjectConfig import *
-from projectLib.Heuristic import Heuristic
 
 comparison = Comparison()
 comparison.load_comparison(comp_results_path["svace"], 0)

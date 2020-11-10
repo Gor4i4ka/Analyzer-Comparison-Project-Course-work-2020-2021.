@@ -1,11 +1,7 @@
-import copy
-
 # Internal imports
-from projectLib.Comparison import Comparison
-from projectLib.AnalyzerInfo import AnalyzerInfo
+from projectLib.Classes.Comparison import Comparison
 from projectLib.ProjectConfig import *
-from projectLib.Heuristic import Heuristic
-print(str(["a", 1, "b"]))
+
 # INFO GENERATION PART START
 
 # juliet_res_dir = xml_source_path["juliet"]
@@ -29,10 +25,10 @@ print(str(["a", 1, "b"]))
 # juliet_info = AnalyzerInfo()
 # juliet_info.load_info(info_path["juliet"], info_ind=0)
 #
-# comparison1 = Heuristic("lines", {"distance": 0}).\
+# comparison2 = Heuristic("lines", {"distance": 1}).\
 #     compare_info_with_heuristic(copy.deepcopy(svace_info), copy.deepcopy(juliet_info))
 #
-# comparison2 = Heuristic("lines", {"distance": 1}).\
+# comparison1 = Heuristic("lines", {"distance": 0}).\
 #     compare_info_with_heuristic(copy.deepcopy(svace_info), copy.deepcopy(juliet_info))
 #
 # comparison1.save_comparison(comp_results_path["svace"], 0)
@@ -46,14 +42,26 @@ comparison2 = Comparison()
 
 comparison1.load_comparison(comp_results_path["svace"], 0)
 comparison2.load_comparison(comp_results_path["svace"], 1)
-print("COMPARISON 1")
-comparison1.group_comparison(type_groups["svace"], type_groups["juliet"]).print_comparison()
-print("COMPARISON 2")
-comparison2.group_comparison(type_groups["svace"], type_groups["juliet"]).print_comparison()
-print("UNION")
-comparison_u = comparison1.comparison_union(comparison2)
-comparison_u.group_comparison(type_groups["svace"], type_groups["juliet"]).print_comparison()
-
-
 
 # COMPARISON LOADING PART END
+# COMPARISON UNION INTERSECTION SUBSTRACTION PART BEGIN
+
+# print("COMPARISON 1")
+# comparison1.group_comparison(type_groups["svace"], type_groups["juliet"]).print_comparison()
+# print("COMPARISON 2")
+# comparison2.group_comparison(type_groups["svace"], type_groups["juliet"]).print_comparison()
+# print("UNION")
+# comparison_u = comparison1.comparison_union(comparison2)
+# comparison_u.group_comparison(type_groups["svace"], type_groups["juliet"]).print_comparison()
+# comparison_u.save_comparison(comp_results_path["svace"], 2)
+#
+# comparison_i = comparison1.comparison_intersection(comparison2)
+# comparison_i.group_comparison(type_groups["svace"], type_groups["juliet"]).print_comparison()
+# comparison_i.save_comparison(comp_results_path["svace"], 3)
+#
+# comparison_s = comparison2.comparison_substraction(comparison1)
+# comparison_s.group_comparison(type_groups["svace"], type_groups["juliet"]).print_comparison()
+# comparison_s.save_comparison(comp_results_path["svace"], 4)
+
+
+# COMPARISON UNION INTERSECTION SUBSTRACTION PART END

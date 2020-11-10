@@ -29,23 +29,6 @@ class ErrorInfo:
         if len(self.bindings) > 0:
             result_list.append(self.bindings)
 
-        return result_list
-
-    def __str__(self):
-        result_list = []
-
-        if self.file:
-            result_list.append(self.file)
-
-        result_list.append(self.lines)
-        result_list.append(self.type)
-
-        if self.hash:
-            result_list.append(self.hash)
-
-        if len(self.bindings) > 0:
-            result_list.append(self.bindings)
-
         return str(result_list)
 
     def __eq__(self, other):

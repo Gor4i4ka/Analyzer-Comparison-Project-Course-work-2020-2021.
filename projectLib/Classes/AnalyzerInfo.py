@@ -7,9 +7,9 @@ import re
 import copy
 
 # Internal imports
-from projectLib.Common import save_list, load_list, print_list, juliet_shorten, remove_parent_dirs, find_in_juliet
-from projectLib.ErrorInfo import ErrorInfo
-from projectLib.FileInfo import FileInfo
+from projectLib.Common import save_list, load_list, juliet_shorten, find_in_juliet
+from projectLib.Classes.ErrorInfo import ErrorInfo
+from projectLib.Classes.FileInfo import FileInfo
 
 class AnalyzerInfo:
 

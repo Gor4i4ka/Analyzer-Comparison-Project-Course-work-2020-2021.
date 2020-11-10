@@ -12,7 +12,7 @@ class Binding:
 
         result_binding.append(self.ind)
 
-        return result_binding
+        return str(result_binding)
 
     def __eq__(self, other):
         if self.file == other.file and self.ind == other.ind:

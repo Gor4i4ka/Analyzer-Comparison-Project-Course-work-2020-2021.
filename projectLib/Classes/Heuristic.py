@@ -1,14 +1,12 @@
-import math
 import numpy as np
 
 import clang
-import clang.cindex as ci
 
 # Internal imports
-from projectLib.Binding import Binding
-from projectLib.Common import srch_list_ind, replace_at_home, dump_ast
-from projectLib.Comparison import Comparison
-from projectLib.AnalyzerInfo import AnalyzerInfo
+from projectLib.Classes.Binding import Binding
+from projectLib.Common import srch_list_ind, replace_at_home
+from projectLib.Classes.Comparison import Comparison
+from projectLib.Classes.AnalyzerInfo import AnalyzerInfo
 
 
 class Heuristic:
@@ -71,60 +69,6 @@ class Heuristic:
         result_comparison.stat_matrix_fill_by_bindings()
                         
         # FileInfo actions END
-        return result_comparison
-
-    def __lines_old(self, analyzer1_info: AnalyzerInfo, analyzer2_info: AnalyzerInfo):
-
-        if analyzer1_info.info_type != "combined" or analyzer2_info.info_type != "combined":
-            print("WRONG INFO TYPE FOR EURISTICS LINES")
-            return -1
-
-        result_comparison = Comparison()
-        result_comparison.fill_for_euristics(analyzer1_info, analyzer2_info)
-
-        cmp_list = result_comparison.compare_list_generation(analyzer1_info, analyzer2_info)
-
-        #################CMP_LIST######################
-
-        for file in cmp_list:
-            present_in_an1_ar = np.zeros((len(file[2])), dtype=np.bool)
-            for defect1_lines_ind in range(len(file[1])):
-                present_in_an2 = False
-                error_name1 = file[3][defect1_lines_ind]
-                ind1 = srch_list_ind(result_comparison.name_catalog_an1, error_name1)
-
-                for defect2_lines_ind in range(len(file[2])):
-
-                    intersection_found = False
-                    for line1 in file[1][defect1_lines_ind]:
-                        for line2 in file[2][defect2_lines_ind]:
-                            if math.fabs(line2 - line1) <= self.heuristic_params["distance"]:
-                                intersection_found = True
-                                break
-                        if intersection_found:
-                            break
-
-                    if intersection_found:
-                        present_in_an1_ar[defect2_lines_ind] = True
-                        error_name2 = file[4][defect2_lines_ind]
-                        ind2 = srch_list_ind(result_comparison.name_catalog_an2, error_name2)
-
-                        present_in_an2 = True
-                        result_comparison.stat_matrix[ind1][ind2] += 1
-                        result_comparison.error_list_both.append([file[0], file[1][defect1_lines_ind],
-                                                                  file[2][defect2_lines_ind], error_name1, error_name2])
-
-                if not present_in_an2:
-                    result_comparison.stat_matrix[ind1][-2] += 1
-                    result_comparison.error_list_an1.append([file[0], file[1][defect1_lines_ind], error_name1])
-
-            for analyzer2_warning_ind in range(len(present_in_an1_ar)):
-                if not present_in_an1_ar[analyzer2_warning_ind]:
-                    error_name2 = file[4][analyzer2_warning_ind]
-                    ind2 = srch_list_ind(result_comparison.name_catalog_an2, error_name2)
-                    result_comparison.stat_matrix[-2][ind2] += 1
-                    result_comparison.error_list_an2.append([file[0], file[2][analyzer2_warning_ind], error_name2])
-
         return result_comparison
 
     def __subfunc_search(self, node: clang.cindex.Cursor, lst: list):

@@ -1,10 +1,7 @@
-import copy
-
 # Internal imports
-from projectLib.Comparison import Comparison
-from projectLib.AnalyzerInfo import AnalyzerInfo
+from projectLib.Classes.AnalyzerInfo import AnalyzerInfo
 from projectLib.ProjectConfig import *
-from projectLib.Heuristic import Heuristic
+from projectLib.Classes.Heuristic import Heuristic
 from projectLib.Common import list_subtraction
 
 svace_info = AnalyzerInfo()

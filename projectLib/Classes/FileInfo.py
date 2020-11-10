@@ -1,7 +1,7 @@
 import copy
 
 # Internal imports
-from projectLib.ErrorInfo import ErrorInfo
+from projectLib.Classes.ErrorInfo import ErrorInfo
 
 
 class FileInfo:
@@ -22,7 +22,7 @@ class FileInfo:
         return False
 
     def __repr__(self):
-        return [self.file, self.errors]
+        return str([self.file, self.errors])
 
     def __str__(self):
         return self.file

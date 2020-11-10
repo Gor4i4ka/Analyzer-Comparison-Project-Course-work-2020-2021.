@@ -1,17 +1,14 @@
-from operator import itemgetter
-
 import numpy as np
 import copy
 import clang
 import clang.cindex
 
 # Internal imports
-from projectLib.Common import srch_list_ind, save_list, load_list, print_numpy, dump_ast
-from projectLib.AnalyzerInfo import AnalyzerInfo
+from projectLib.Common import srch_list_ind, save_list, load_list, print_numpy
+from projectLib.Classes.AnalyzerInfo import AnalyzerInfo
 from projectLib.ProjectConfig import type_groups
-from projectLib.FileInfo import FileInfo
-from projectLib.ErrorInfo import ErrorInfo
-from projectLib.Binding import Binding
+from projectLib.Classes.FileInfo import FileInfo
+from projectLib.Classes.ErrorInfo import ErrorInfo
 
 
 class Comparison:
@@ -106,8 +103,8 @@ class Comparison:
         name_catalog_an1_path = res_dir + "/cmp_name_catalog_an1_ind" + str(comparison_id) + ".data"
         name_catalog_an2_path = res_dir + "/cmp_name_catalog_an2_ind" + str(comparison_id) + ".data"
         stat_matrix_path = res_dir + "/cmp_stat_matrix" + str(comparison_id) + ".npy"
-        analyzer1_info_path = res_dir
-        analyzer2_info_path = res_dir
+        analyzer1_info_path = res_dir + "/analyzer1_info"
+        analyzer2_info_path = res_dir + "/analyzer2_info"
 
         save_list(self.name_catalog_an1, name_catalog_an1_path)
         save_list(self.name_catalog_an2, name_catalog_an2_path)
@@ -122,8 +119,8 @@ class Comparison:
         name_catalog_an1_path = res_dir + "/cmp_name_catalog_an1_ind" + str(comparison_id) + ".data"
         name_catalog_an2_path = res_dir + "/cmp_name_catalog_an2_ind" + str(comparison_id) + ".data"
         stat_matrix_path = res_dir + "/cmp_stat_matrix" + str(comparison_id) + ".npy"
-        analyzer1_info_path = res_dir
-        analyzer2_info_path = res_dir
+        analyzer1_info_path = res_dir + "/analyzer1_info"
+        analyzer2_info_path = res_dir + "/analyzer2_info"
 
         self.name_catalog_an1 = load_list(name_catalog_an1_path)
         self.name_catalog_an2 = load_list(name_catalog_an2_path)
@@ -232,7 +229,7 @@ class Comparison:
                     print(error_info)
             return 0
 
-        if mode == "er2":
+        if mode == "an2":
             only_analyzer2_errors = self.get_errors_only_in_analyzer_num(2)
             for file_info in only_analyzer2_errors.info:
                 print(file_info)
@@ -241,7 +238,7 @@ class Comparison:
                     print(error_info)
             return 0
 
-        if mode == "er_both":
+        if mode == "an_both":
             both_analyzers_errors = self.get_errors_in_all_analyzers()
             ind = 0
             for binding in both_analyzers_errors.info:
@@ -255,7 +252,6 @@ class Comparison:
         return -1
 
     def stat_matrix_fill_by_bindings(self):
-
         for file_info_an1 in self.analyzer1_info.info:
             for error_info_an1 in file_info_an1:
 
@@ -263,7 +259,6 @@ class Comparison:
                 self.stat_matrix[name_catalog1_ind, -1] += 1
 
                 if not error_info_an1.has_bindings():
-                    name_catalog1_ind = srch_list_ind(self.name_catalog_an1, error_info_an1.type)
                     self.stat_matrix[name_catalog1_ind, -2] += 1
 
                 for binding in error_info_an1.bindings:
@@ -292,9 +287,6 @@ class Comparison:
         result_comparison.name_catalog_an2 = copy.deepcopy(self.name_catalog_an2)
 
         result_comparison.stat_matrix = np.zeros(self.stat_matrix.shape, dtype='int')
-        result_comparison.stat_matrix[-1, :] = self.stat_matrix[-1, :]
-        result_comparison.stat_matrix[:, -1] = self.stat_matrix[:, -1]
-        result_comparison.stat_matrix[-2, -2] = -1
 
         result_comparison.analyzer1_info = AnalyzerInfo(analyzer_name=self.analyzer1_info.analyzer_name,
                                                         info_type=self.analyzer1_info.info_type)
@@ -323,6 +315,9 @@ class Comparison:
                                                   type=file_info_cmp1.errors[error_info_ind].type,
                                                   bindings=bindings_to_add))
             if analyzer_num == 1:
+                # print(file_info_to_add)
+                # for el in file_info_to_add:
+                #     print(el)
                 result_comparison.analyzer1_info.append(file_info_to_add)
             else:
                 result_comparison.analyzer2_info.append(file_info_to_add)
@@ -337,8 +332,8 @@ class Comparison:
 
         # FileInfo actions BEGIN
 
-        self.__subproc_comparison_union_form_info(another_comparison, result_comparison, 1)
-        self.__subproc_comparison_union_form_info(another_comparison, result_comparison, 2)
+        self.__subproc_comparison_union_form_info(another_comparison, result_comparison, analyzer_num=1)
+        self.__subproc_comparison_union_form_info(another_comparison, result_comparison, analyzer_num=2)
 
         result_comparison.stat_matrix_fill_by_bindings()
         # FileInfo actions END
