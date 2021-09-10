@@ -1,0 +1,11 @@
+<container>
+  <testcase>
+      <file path="jultst_div_zero_files_1.c">
+        <flaw line="1" name="CWE-190: overflow"/>
+        <flaw line="9" name="CWE-190: overflow"/>
+      </file>
+      <file path="jultst_div_zero_files_2.c">
+        <flaw line="7" name="CWE-190: overflow"/>
+      </file>
+  </testcase>
+</container>

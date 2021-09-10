@@ -1,0 +1,336 @@
+##################################################################################
+#######################BOTH Integer overflow - CWE190#############################
+##################################################################################
+
+UNREACHABLE_CODE 14 1462 1476
+UNCHECKED_FUNC_RES.LIB.STRICT 33 5112 5186
+PROC_USE.RAND 40 5105 5150
+INTEGER OVERFLOW 985 914 1899
+
+ONLY AN2 9166
+TOTAL 10224
+
+CHECKING:
+
+UNREACHABLE_CODE
+
+/home/nick/C/testcases/CWE190_Integer_Overflow/s03/CWE190_Integer_Overflow__int_fscanf_multiply_17.c
+Почему после общеизвестной функции считывания data все еще считается 0? Маловероятный исход. А в других примерах - обязательный.
+Более того, комментарий что "всегда" 0, на утверждении ранее, но сам чекер - "might"
+
+P.S. В остальных многих срабатываниях так же. Зачем проверка на 0? underflow не с  слишком мелкими float? странная конвенция.
+
+UNCHECKED_FUNC_RES.LIB.STRICT
+
+/home/nick/C/testcases/CWE190_Integer_Overflow/s01/CWE190_Integer_Overflow__char_fscanf_add_64a.c
+Ошибка свейса верная, он не видит ошибку набора джулиет, но непонятно почему авторы вообще там ее поставили?
+Что плохого в scanf с %c
+
+И так везде.
+
+PROC_USE.RAND
+
+/home/nick/C/testcases/CWE190_Integer_Overflow/s01/CWE190_Integer_Overflow__char_rand_add_64a.c
+
+Нет ошибки свейса при касте к более короткому типу, анализатор не указывает на неопределенное поведение.
+Кажется скорее неправильным, тем более в джулиет ошибка есть.
+
+ошибка много где повторяется
+
+INTEGER OVERFLOW CWE 190
+
+какое определение Overflow и underflow в Svace. multiply с char - underflow, + 1 с int - overflow
+
+char (мало, но больше short):
+
+add
+multiply +
+square +
+
+max_add
+max_square
+max_multiply
+
+int (больше всего):
+
+add +
+multiply +
+square +
+
+max_add +
+max_square +
+max_multiply +
+
+int64 (средне):
+
+add +
+multiply +
+square
+
+max_add +
+max_square
+max_multiply +
+
+short (очень мало):
+
+add
+multiply +
+square +
+
+max_add
+max_square
+max_multiply
+
+unsigned int (средне):
+
+add +
+multiply +
+square +
+
+max_add +
+max_square +
+max_multiply +
+
+##################################################################################
+#######################BOTH Integer overflow - CWE190#############################
+##################################################################################
+
+##################################################################################
+#######################AN2 Integer overflow - CWE190#############################
+##################################################################################
+
+char (мало, но больше short):
+
+add +
+multiply +
+square +
+postinc +
+preinc +
+
+max_add +
+max_square +
+max_multiply +
+max_postinc +
+max_preinc +
+
+rand_add +
+rand_multiply +
+rand_postinc +
+rand_preinc +
+rand_square +
+
+int (больше всего):
+
+connect_socket_add +
+connect_socket_multiply +
+connect_socket_postinc +
+connect_socket_preinc +
+connect_socket_square +
+
+add +
+multiply +
+square +
+postinc +
+preinc +
+
+max_add +
+max_square +
+max_multiply +
+max_postinc +
+max_preinc +
+
+rand_add +
+rand_multiply +
+rand_postinc +
+rand_preinc +
+rand_square +
+
+listen_socket_add +
+listen_socket_multiply +
+listen_socket_postinc +
+listen_socket_preinc +
+listen_socket_square +
+
+int64 (средне):
+
+add +
+multiply +
+square +
+postinc +
+preinc +
+
+max_add +
+max_square +
+max_multiply +
+max_postinc +
+max_preinc +
+
+rand_add +
+rand_multiply +
+rand_postinc +
+rand_preinc +
+rand_square +
+
+short (очень мало):
+
+add +
+multiply +
+square +
+postinc +
+preinc +
+
+max_add +
+max_square +
+max_multiply +
+max_postinc +
+max_preinc +
+
+rand_add +
+rand_multiply +
+rand_postinc +
+rand_preinc +
+rand_square +
+
+unsigned int (средне):
+
+add +
+multiply +
+square +
+postinc +
+preinc +
+
+max_add +
+max_square +
+max_multiply +
+
+max_postinc +
+max_preinc +
+rand_add +
+rand_multiply +
+rand_postinc +
+rand_preinc +
+rand_square +
+
+##################################################################################
+#######################AN2 Integer overflow - CWE190#############################
+##################################################################################
+
+##################################################################################
+#######################AN1 Integer overflow - CWE190#############################
+##################################################################################
+
+INVARIANT_RESULT:
+Рассмотрены в прошлом.(report1)
+PROC_USE.RAND:
+Рассмотрены в прошлом.(report1)
+REDUNDANT_COMPARISON.ALWAYS_FALSE:
+Рассмотрены в прошлом.(report1)
+REDUNDANT_COMPARISON.RET
+Рассмотрены в прошлом.(report1)
+SIMILAR_BRANCHES
+Рассмотрены в прошлом.(report1)
+UNREACHABLE_CODE
+Рассмотрены в прошлом.(report1)
+UNREACHABLE_CODE.RET
+Рассмотрены в прошлом.(report1)
+UNSPECIFIED_CHAR_IN_COND
+Рассмотрены в прошлом.(report1)
+UNUSED_VALUE
+Рассмотрены в прошлом.(report1)
+UNUSED_VALUE.PARAM_ASSIGN
+Рассмотрены в прошлом.(report1)
+
+INTEGER_OVERFLOW
+
+char:
+
+add
+multiply +
+square +
+
+max_add
+max_square
+max_multiply
+
+int
+
+add
+multiply +
+square +
+
+max_add
+max_square +
+max_multiply
+
+int64:
+
+add
+multiply +
+square +
+postinc
+preinc
+
+max_add
+max_square +
+max_multiply
+max_postinc
+max_preinc
+
+rand_add
+rand_multiply
+rand_postinc
+rand_preinc
+rand_square
+
+short:
+
+add
+multiply +
+square +
+postinc
+preinc
+
+max_add
+max_square
+max_multiply
+max_postinc
+max_preinc
+
+rand_add
+rand_multiply
+rand_postinc
+rand_preinc
+rand_square
+
+unsigned int (средне):
+
+add
+multiply +
+square +
+postinc
+preinc
+
+max_add
+max_square +
+max_multiply
+max_postinc
+max_preinc
+
+rand_add
+rand_multiply
+rand_postinc
+rand_preinc
+rand_square
+
+##################################################################################
+#######################AN1 Integer overflow - CWE190#############################
+##################################################################################
+
+красные - ложное срабатывание в принципе
+синее - ошибка строчкой
+желтое - ожибка строчкой и в принципе.
+
+итого - нет сравнений svace которые надо связывать с juliet-скими.
+INTEGER_OVERFLOW сам некорректен.
+
+

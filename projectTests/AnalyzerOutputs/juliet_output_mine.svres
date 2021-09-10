@@ -1,0 +1,7 @@
+<container>
+  <testcase>
+    <file path="jultst_div_zero.c">
+      <flaw line="3" name="CWE-396: Division by zero"/>
+    </file>
+  </testcase>
+</container>

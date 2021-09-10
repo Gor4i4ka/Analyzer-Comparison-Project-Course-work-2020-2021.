@@ -1,0 +1,33 @@
+1)
+/home/nick/C/testcases/CWE190_Integer_Overflow/s01/CWE190_Integer_Overflow__char_fscanf_add_01.c
+Неполность INTEGER_OVERFLOW (смотри report2 по классам). Как будто опять проблемы с границами, но
+отсутствие предупреждения на весь класс - странно.
+
+1к+ неотловленных ошибок полноты
+
+ПОДРОБНЕЕ ПО КЛАССАМ СМ report2.
+
+2)
+/home/nick/C/testcases/CWE190_Integer_Overflow/s01/CWE190_Integer_Overflow__char_fscanf_multiply_01.c
+Пример неверного на goodB2G
+
+Неверные границы на момент операции и само срабатывание (кринж какой-то).
+
+Проявление ошибки не только в goodB2G, но и там, где goodB2G реализован как ветка if/else stmt
+
+Под 800/900 ошибок точности
+
+3)
+/home/nick/C/testcases/CWE190_Integer_Overflow/s01/CWE190_Integer_Overflow__int64_t_fscanf_add_63b.c
+Отсутствие межпроцедурности: пропуск любого тесткейса из 2+ файлов
+целый класс ошибок полноты
+
+4)
+
+/home/nick/C/testcases/CWE190_Integer_Overflow/s02/CWE190_Integer_Overflow__int64_t_fscanf_square_11.c
+
+ругань на  1 строку выше. Если этим пренебречь, в основе верные предупреждения (1-2 неверных)
+
+дает ошибку и полноты, и точности.
+
+(смущает memory leak)

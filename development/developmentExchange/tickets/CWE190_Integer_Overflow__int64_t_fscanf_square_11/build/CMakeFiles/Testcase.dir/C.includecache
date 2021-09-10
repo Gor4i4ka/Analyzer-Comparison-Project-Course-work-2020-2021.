@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nick/PycharmProjects/analyzer_comparison/sa_comparison/development/developmentExchange/tickets/CWE190_Integer_Overflow__int64_t_fscanf_square_11/CWE190_Integer_Overflow__int64_t_fscanf_square_11.c
+std_testcase.h
+/home/nick/PycharmProjects/analyzer_comparison/sa_comparison/development/developmentExchange/tickets/CWE190_Integer_Overflow__int64_t_fscanf_square_11/std_testcase.h
+math.h
+-
+inttypes.h
+-
+

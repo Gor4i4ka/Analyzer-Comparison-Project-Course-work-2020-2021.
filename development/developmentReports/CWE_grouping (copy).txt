@@ -1,0 +1,171 @@
+CWE 15 - x, max: None 0/48 -
+###
+CWE 23 - x, max: PROC_USE.VULNERABLE(-), 0/2400 -
+CWE 36 - x, max: PROC_USE.VULNERABLE(-), 0/2400 -
+###
+CWE 78 - x, max: PROC_USE.VULNERABLE(-), 0/4800 -
+CWE 90 - x, max: None, 0/480 -
+###
+CWE 114 - x, max: None, 0/576 -
+###
+CWE 121 - BUFFER_OVERFLOW.EX, BUFFER_OVERFLOW.STRING, BUFFER_SHIFT, BUFFER_SIZE_MISMATCH, DYNAMIC_OVERFLOW.EX,
+    OVERFLOW_AFTER_CHECK.EX, OVERFLOW_UNDER_CHECK.EX, STRING_OVERFLOW, TAINTED_ARRAY_INDEX, TAINTED_ARRAY_INDEX.EX
+    TAINTED_ARRAY_INDEX.MIGHT.
+    max: BUFFER_OVERFLOW.EX (+), ~1600/4968 (уже с эвристиками) +-
+CWE 122 - BUFFER_OVERFLOW.STRING, DYNAMIC_OVERFOW, DYNAMIC_OVERFLOW.EX, DYNAMIC_SIZE_MISMATCH
+    OVERFLOW_AFTER_CHECK.EX, OVERFLOW_UNDER_CHECK.EX, STRING_OVERFLOW, TAINTED_ARRAY_INDEX, TAINTED_ARRAY_INDEX.EX
+    TAINTED_ARRAY_INDEX.MIGHT, MEMORY_LEAK, MEMORY_LEAK.CTOR, MEMORY_LEAK.EX
+    max: BUFFER_OVERFLOW.EX (+), ~1600/4968 (уже  с эвристиками) +-
+CWE 123 - x, max: INVARIANT_RESULT(-), 0/144 -
+CWE 124 - BUFFER_UNDERFLOW, DYNAMIC_OVERFLOW, NEGATIVE_CODE_ERROR.EX, STATIC_OVERFLOW, STATIC_OVERFLOW.LOCAL,
+    TAINTED_ARRAY_INDEX, TAINTED_ARRAY_INDEX.MIGHT
+    EXTRA: MEMORY_LEAK.* - Истинные побочные
+    max: DYNAMIC_OVERFLOW (+), ~550/2048 +
+CWE 126 - BUFFER_OVERFLOW.EX, BUFFER_SHIFT, DYNAMIC_OVERFLOW.EX, TAINTED_ARRAY_INDEX, TAINTED_ARRAY_INDEX.EX,
+    TAINTED_ARRAY_INDEX.MIGHT
+    max: DYNAMIC_OVERFLOW.EX (+) ~540/1452 +
+CWE 127 - BUFFER_UNDERFLOW, DYNAMIC_OVERFLOW, NEGATIVE_CODE_ERROR.EX, STATIC_OVERFLOW, STATIC_OVERFLOW.LOCAL,
+    STRING_OVERFLOW, TAINTED_ARRAY_INDEX, TAINTED_ARRAY_INDEX.MIGHT,
+    EXTRA: MEMORY_LEAK.* - Истинные побочные
+    max: STRING (+), ~660/2048 +
+CWE 134 - x, max: PROC_USE.VULNERABLE.GETENV (-) 0/2880 -
+###
+CWE 176 - x, max: None, 0/48 -
+###
+CWE 188 - VARIABLE_IS_NOT_ARRAY, max: VARIABLE_IS_NOT_ARRAY, 18/36 +
+    EXTRA: DEAD_CODE - 3 Svace чекера на мертвыйы код
+###
+CWE 190 - INTEGER_OVERFLOW, max: INTEGER_OVERFLOW, 613/2592 -
+CWE 191 - INTEGER_OVERFLOW, max: INTEGER_OVERFLOW, 372/1584 -
+###
+CWE 194 - BUFFER_UNDERFLOW, NEGATIVE_CODE_ERROR.EX, OVERFLOW_UNDER_CHECK, STATIC_OVERFLOW, STATIC_OVERFLOW.LOCAL,
+    TAINTED_ARRAY_INDEX, TAINTED_ARRAY_INDEX.MIGHT, TAINTED_INT, TAINTED_INT.MIGHT,
+    max: NEGATIVE_CODE_ERROR.EX (+) 1200/1152 +
+CWE 195 - BUFFER_UNDERFLOW, INTEGER_OVERFLOW, NEGATIVE_CODE_ERROR.EX, STATIC_OVERFLOW, STATIC_OVERFLOW.LOCAL,
+    TAINTED_ARRAY_INDEX, TAINTED_ARRAY_INDEX.MIGHT, TAINTED_INT, TAINTED_INT.MIGHT
+    max: NEGATIVE_CODE_ERROR.EX (+) ~2000/1152
+    P.S. 700 срабатываний NEGATIVE... - скорее всего все заматчится к этим 700 и будет ~900
+CWE 196 - x max: PROC_USE.RAND (-) 0/18 -
+CWE 197 - x  max: PROC_USE.RAND (-) 0/864 -
+###
+CWE 222 - x max: None 0/18
+CWE 223 - x max: None 0/18
+CWE 226 - x max: None 0/72
+###
+CWE 242 - PROC_USE.VULNERABLE, max: PROC_USE.VULNERABLE 18/18 -
+    P.S. Полностью покрывается построчно.
+CWE 244 - x max: None 0/72
+###
+CWE 247 - x max: None 0/18
+###
+CWE 252 - UCHECKED_FUNC_RES.STRICT, UNCHECKED_FUNC_RES.LIB.STRICT.MACRO, UNCHECKED_FUNC_RES.STAT
+    max: UNCHECKED_FUNC_RES.LIB.STRICT (+) ~120/630 +
+    Extra: правильный Svace DEAD_CODE (INVARIANT RESULT)
+CWE 253 - UNCHECKED_FUNC_RES.FREAD
+    max: UNCHECKED_FUNC_RED.FREAD (+) ~18/684 -+
+    P.S. Есть срабатывания других чекеров, косвенно относящихся к проблеме, но не напрямую. все равно макс 100/630
+###
+CWE 256 - x max: None 0/96 -
+CWE 259 - x max: None 0/96 -
+###
+CWE 272 - x max: None 0/252 -
+CWE 273 - x max: None 0/36 -
+CWE 284 - x max: None 0/216 -
+###
+CWE 319 - x max: None 0/192 -
+CWE 321 -x max: None 0/96 -
+CWE 325 - x max: None 0/72 -
+CWE 327 - x max: None 0/54 -
+CWE 328 - x max: None 0/54 -
+CWE 338 - x max: None 0/18 -
+###
+CWE 364 - x max: INVARIANT_RESULT (-) 0/18 -
+CWE 366 - x max: INVARIANT_RESULT (-) 0/36 -
+CWE 367 - TOCTTOU_SEQUENCE max: CHECK_AFTER_PASS_TO_PROC (-) 7/36 -+
+    P.S. TOCTTOU_SEQUENCE соотносится по строкам.
+###
+CWE 369 - DIVISION_BY_ZERO, DIVISION_BY_ZERO.EX max: DIVISION_BY_ZERO.EX ~740/864 +
+    P.S. Уже видно лишние срабатывания в GOOD функциях.
+###
+CWE 377 - PROC_USE.VULNERABLE.TEMP (+) max: PROC_USE.VULNERABLE.TEMP 54/144 -+
+    P.S. PROC_USE.VULNERABLE.TEMP соотносится по строкам.
+###
+CWE 390 - PROC_USE_RAND (-) max: PROC_USE_RAND 0/90 -
+CWE 391 - x, max: None 0/54 -
+CWE 396 - x, max: REDUNDANT_COMPARISON.RET (-) 0/54 -
+CWE 397 - x, max: REDUNDANT_COMPARISON.RET (-) 0/20 -
+###
+CWE 398 -x, max: PROC_USE.RAND (-) 0/181 -
+    P.S. Срабатывания на другой код "низкого качества" у Svace в рамках данного CWE верные
+###
+CWE 400 - x, max:PROC_USE_RAND 0/720 -
+    P.S. Срабатывания Svace хоть очень часто (особенно PROC_USE.RAND)  совпадают по стрчоке с нужными,
+    но по смыслу принципиально иные
+###
+CWE 401 - FREE_NOONHEAP_MEMORY, MEMORY_LEAK, MEMORY_LEAK.CTOR, MEMORY_LEAK.CTOR.EXCEPTION, MEMORY_LEAK.EX,
+    MEMORY_LEAK.EX.EXCEPTION, MEMORY_LEAK.STRDUP.STRUCT, MEMORY_LEAK.STRUCT ~1000 / 1658 +-
+    P.S. Уже 351 соотносится с анализом достигающих определений только для MEMORY_LEAK. Надо доделать для остальных
+CWE 404 - HANDLE_LEAK max: HANDLE_LEAK 18/384 -+
+    P.S. Скорее всего логика HANDLE_LEAK не совсем соотносится с логикой juliet
+CWE 415 - DOUBLE_FREE.EX, max: DOUBLE_FREE.EX 665/962 +
+    P.S. Верные срабатывания Svace в good функциях на USE_AFTER_FREE,  PASSED_TO_PROC_AFTER_FREE.EX, но не к делу
+    Неверные на MEMORY_LEAK.EX
+CWE 416 - DEREF_AFTER_FREE, DEREF_OF_NULL.EX, USE_AFTER_FREE ~400/459 +
+    P.S. Верные срабатывания Svace на MEMORY_LEAK, MEMORY_LEAK.EX, PASSED_TO_PROC_AFTER_FREE.EX, но не к делу
+###
+CWE 426 - x, max: PROC_USE.VULNERABLE(-) 0/192 -
+CWE 427 - x, max: PROC.USE.VULNERABLE.GETENV(+-), 48/480 +
+	P.S. ОШИБОЧНЫЕ СРАБАТЫВАНИЯ HANDLE_LEAK.EXCEPTION
+###
+CWE 440 - x. 0/1 -
+	P.S. Несоответствие функции спецификации. Svace не ловит, но идея примера забавная.
+###
+CWE 457 - UNINIT.LOCAL_VAR, UNINIT.CTOR, max: UNINIT.LOCAL_VAR(+)  185/948
+	P.S. Правильные MEMORY_LEAK, MEMORY_LEAK.STRUCT, juliet почему-то даже не
+	сообщает о возможных CWE 401.
+	В чем причина отсутствия обработки функций StaticTrue, StaticFalse,
+	статических переменных в файле (StaticFive)? либо обработка неверная.
+###
+CWE 459 - x, max: INVARIANT_RESULT(-) 0/36 -
+	P.S. Что происходит с INVARIAN_RESULT? Глюки?
+###
+CWE 464 - x, max: UNUSED_VALUE.PARAM_ASSIGN (-) 0/48 -
+###
+CWE 467 - SIZEOF_POINTER_TYPE.CHAR(+), max: 54/54 -
+	P.S. Полностью найдено
+CWE 468 - SIZEOF_POINTER_TYPE, max: SIZEOF_POINTER_TYPE(+) 19/37 -+
+	P.S. Полностью сопоставлено lines. Мб найдется тикет.
+CWE 469 - x, max: UNREACHABLE_CODE.RET (-) 0/36 -
+###
+CWE 475 -x, max: BUFFER_OVERFLAP (+) 18/36 -+
+	P.S. Полностью сопоставлено lines. Мб найдется тикет.
+###
+CWE 476 - DEREF_AFTER_NULL.EX, DEREF_OF_NULL, DEREF_OF_NULL.EX, DEREF_OF_NULL.EX.COND,
+	DEREF_OF_NULL.STRICT 
+	max: ~288/348 +-
+	P.S. Почему DEREF_AFTER_NULL и NULL_AFTER_DEREF Вообще в этом CWE даже со
+	стороны juliet.
+	правильные MEMORY_LEAK'и
+
+	скорее всего находится lines. мб будут тикеты
+###
+CWE 478 - x, max: PROC_USE.RAND(-) 0/18 -
+###
+CWE 479 - x, max: INVARIANT_RESULT(-) 0/18 -
+###
+CWE 480 - x, max: PROC_USE.RAND (-) 0/18 -
+CWE 481 - UNUSED_FUNC_RES.REWRITE.MINOR, max: UNUSED_FUNC_RES.REWRITE.MINOR 18/18 -+
+	P.S. Полностью покрывается lines. Старый знакомый чекер.
+CWE 482 - NO_EFFECT, max: NO_EFFECT (+) 18/18 -+
+	P.S. Полностью покрывается lines.
+CWE 483 - CONFUSING_IDENTATION (+), max: 1/20 -+
+	P.S. Полностью покрывается lines. Интересная идея для MIGHT чекера, нет?
+CWE 484 - FALL_THROUGH, max FALL_THROUGH (+) 18/18 +-
+	P.S. Надо проверить покрытие lines
+###
+CWE 500 - x, max: None 0/1 -
+###
+CWE 506 - x, max: 
+	
+
+

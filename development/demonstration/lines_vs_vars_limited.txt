@@ -1,0 +1,32 @@
+                                CWE121            CWE122            CWE134            ONLY_IN_ANALYZER1 TOTAL_AMOUNT_AN1
+TAINTED_ARRAY_INDEX.EX            104               18                0                 136               258
+TAINTED_ARRAY_INDEX.MIGHT         73                0                 0                 33                106
+BUFFER_SHIFT                      19                0                 0                 60                79
+BUFFER_OVERFLOW.EX                356               0                 0                 112               468
+DYNAMIC_OVERFLOW.EX               164               1143              0                 530               1837
+BUFFER_OVERFLOW.STRING            346               422               0                 232               1000
+OVERFLOW_AFTER_CHECK.EX           65                0                 0                 0                 65
+OVERFLOW_UNDER_CHECK              45                0                 0                 0                 45
+BUFFER_SIZE_MISMATCH              155               0                 0                 0                 155
+STRING_OVERFLOW                   182               152               0                 216               550
+DYNAMIC_OVERFLOW                  0                 38                0                 120               158
+ONLY_IN_ANALYZER2                 3513              4085              2879              -1                -1
+TOTAL_AMOUNT_AN2                  5064              6146              2879              -1                -1
+
+
+                                CWE121            CWE122            CWE134            ONLY_IN_ANALYZER1 TOTAL_AMOUNT_AN1
+TAINTED_ARRAY_INDEX.EX            104               18                0                 136               258
+TAINTED_ARRAY_INDEX.MIGHT         73                0                 0                 33                106
+BUFFER_SHIFT                      37                0                 0                 42                79
+BUFFER_OVERFLOW.EX                412               0                 0                 56                468
+DYNAMIC_OVERFLOW.EX               209               1180              0                 448               1837
+BUFFER_OVERFLOW.STRING            346               422               0                 232               1000
+OVERFLOW_AFTER_CHECK.EX           65                0                 0                 0                 65
+OVERFLOW_UNDER_CHECK              45                0                 0                 0                 45
+BUFFER_SIZE_MISMATCH              155               0                 0                 0                 155
+STRING_OVERFLOW                   282               252               0                 16                550
+DYNAMIC_OVERFLOW                  0                 154               0                 4                 158
+ONLY_IN_ANALYZER2                 3495              4079              2879              -1                -1
+TOTAL_AMOUNT_AN2                  5064              6146              2879              -1                -1
+
+18 + 56 + 45 +37 + 100 + 100 + 116 = 472

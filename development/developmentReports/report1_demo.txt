@@ -1,0 +1,7 @@
+BUFFER_OVERFLOW.STRING
+CWE121_Stack_Based_Buffer_Overflow__CWE806_char_alloca_ncat_83a.cpp
+SIMILAR_BRANCHES
+CWE122_Heap_Based_Buffer_Overflow__c_CWE129_rand_12.c
+DYNAMIC_OVERFLOW.EX
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_alloca_loop_01.c
+

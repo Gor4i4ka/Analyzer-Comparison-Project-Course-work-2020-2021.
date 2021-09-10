@@ -1,0 +1,43 @@
+                                  CWE121            CWE122            CWE123            CWE124            CWE126            CWE127            CWE134            ONLY_IN_ANALYZER1 TOTAL_AMOUNT_AN1
+TAINTED_ARRAY_INDEX.EX            104               18                0                 0                 86                0                 0                 160               368
+TAINTED_ARRAY_INDEX.MIGHT         73                0                 0                 73                73                73                0                 132               424
+TAINTED_ARRAY_INDEX               19                0                 0                 19                19                19                0                 52                128
+BUFFER_SHIFT                      19                0                 0                 0                 19                0                 0                 60                98
+BUFFER_OVERFLOW.EX                356               0                 0                 0                 60                0                 0                 122               538
+DYNAMIC_OVERFLOW.EX               164               1143              0                 0                 144               0                 0                 586               2037
+BUFFER_OVERFLOW.STRING            346               422               0                 0                 0                 0                 0                 232               1000
+OVERFLOW_AFTER_CHECK.EX           65                0                 0                 0                 0                 0                 0                 0                 65
+OVERFLOW_UNDER_CHECK              45                0                 0                 0                 0                 0                 0                 0                 45
+BUFFER_SIZE_MISMATCH              155               0                 0                 0                 0                 0                 0                 0                 155
+STRING_OVERFLOW                   182               152               0                 0                 0                 68                0                 300               702
+DYNAMIC_OVERFLOW                  0                 38                0                 150               0                 120               0                 120               428
+BUFFER_UNDERFLOW                  0                 0                 0                 73                0                 73                0                 36                182
+STATIC_OVERFLOW                   0                 0                 0                 34                0                 34                0                 0                 68
+STATIC_OVERFLOW.LOCAL             0                 0                 0                 3                 0                 3                 0                 20                26
+ONLY_IN_ANALYZER2                 3513              4085              288               1536              1125              1592              2879              -1                -1
+TOTAL_AMOUNT_AN2                  5064              6146              288               2048              1452              2048              2879              -1                -1
+
+Process finished with exit code 0
+
+
+############################################################################################################################
+
+                                  CWE121            CWE122            CWE123            CWE124            CWE126            CWE127            CWE134            ONLY_IN_ANALYZER1 TOTAL_AMOUNT_AN1
+TAINTED_ARRAY_INDEX.EX            104               18                0                 0                 86                0                 0                 160               368
+TAINTED_ARRAY_INDEX.MIGHT         82                0                 0                 82                82                82                0                 96                424
+TAINTED_ARRAY_INDEX               22                0                 0                 22                22                22                0                 40                128
+BUFFER_SHIFT                      37                0                 0                 0                 19                0                 0                 42                98
+BUFFER_OVERFLOW.EX                412               0                 0                 0                 60                0                 0                 66                538
+BUFFER_OVERFLOW.STRING            346               422               0                 0                 0                 0                 0                 232               1000
+OVERFLOW_AFTER_CHECK.EX           65                0                 0                 0                 0                 0                 0                 0                 65
+OVERFLOW_UNDER_CHECK              45                0                 0                 0                 0                 0                 0                 0                 45
+BUFFER_SIZE_MISMATCH              155               0                 0                 0                 0                 0                 0                 0                 155
+STRING_OVERFLOW                   282               252               0                 0                 0                 148               0                 20                702
+DYNAMIC_OVERFLOW                  0                 154               0                 150               0                 120               0                 4                 428
+BUFFER_UNDERFLOW                  0                 0                 0                 91                0                 91                0                 0                 182
+STATIC_OVERFLOW                   0                 0                 0                 34                0                 34                0                 0                 68
+STATIC_OVERFLOW.LOCAL             0                 0                 0                 3                 0                 3                 0                 20                26
+ONLY_IN_ANALYZER2                 3492              4079              288               1521              1122              1577              2879              -1                -1
+TOTAL_AMOUNT_AN2                  5064              6146              288               2048              1452              2048              2879              -1                -1
+
+

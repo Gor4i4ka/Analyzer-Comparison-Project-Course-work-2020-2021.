@@ -1,0 +1,9 @@
+<container>
+  <testcase>
+    <file path="jultst_two_overflows.c">
+      <flaw line="5" name="CWE-190: overflow"/>
+      <flaw line="9" name="CWE-190: overflow"/>
+      <flaw line="2" name="CWE-190: overflow"/>
+    </file>
+  </testcase>
+</container>

@@ -1,0 +1,6 @@
+
+0) Разметка CWE juliet на перспективность для инструмента.
+1) Добавление heur In_One_function
+2) Добавление heur In_one_file
+3) дебаг juliet_func_stratify
+4) дебаг juliet_file_Stratify

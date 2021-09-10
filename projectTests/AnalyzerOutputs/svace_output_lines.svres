@@ -1,0 +1,86 @@
+<object-stream>
+  <SvResVersion>2.4:Svace results format</SvResVersion>
+  <SvResResults>
+    <results>
+      <SvResProjResults>
+        <projectName>C</projectName>
+        <projectSrcDir>/home/nick/C</projectSrcDir>
+        <warnings>
+          <WarnInfo id="1000" warnClass="INTEGER_OVERFLOW" line="5" file="/home/nick/PycharmProjects/analyzer_comparison_v1/sa_comparison/projectTests/CSourceCode/testcases/jultst_files/jultst_two_overflows.c" msg="INTEGER_OVERFLOW" status="" details="" comment="" function="" mtid="" tool="" lang="" flags="0"/>
+          <WarnInfo id="1001" warnClass="INTEGER_OVERFLOW" line="7" file="/home/nick/PycharmProjects/analyzer_comparison_v1/sa_comparison/projectTests/CSourceCode/testcases/jultst_files/jultst_two_overflows.c" msg="INTEGER_OVERFLOW" status="" details="" comment="" function="" mtid="" tool="" lang="" flags="0"/>
+          <WarnInfo id="1002" warnClass="INTEGER_OVERFLOW" line="2" file="/home/nick/PycharmProjects/analyzer_comparison_v1/sa_comparison/projectTests/CSourceCode/testcases/jultst_files/jultst_two_overflows.c" msg="INTEGER_OVERFLOW" status="" details="" comment="" function="" mtid="" tool="" lang="" flags="0"/>
+        </warnings>
+      </SvResProjResults>
+    </results>
+  </SvResResults>
+  <SvResResultsEx>
+    <results>
+      <SvResProjResultsEx>
+        <projectName>C</projectName>
+        <warnings>
+          <WarnInfoEx id="1000" zRate="0.0">
+            <traces>
+              <RoleTraceInfo role="defect">
+                <locations>
+                  <LocInfo file="/home/nick/PycharmProjects/analyzer_comparison_v1/sa_comparison/projectTests/CSourceCode/testcases/jultst_files/jultst_two_overflows.c" line="5" spec="" info="DIVISION'" col="0"/>
+                </locations>
+              </RoleTraceInfo>
+            </traces>
+            <userAttributes class="tree-map">
+              <entry>
+                <string>.comment</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>.status</string>
+                <string>Default</string>
+              </entry>
+            </userAttributes>
+          </WarnInfoEx>
+
+          <WarnInfoEx id="1001" zRate="0.0">
+            <traces>
+              <RoleTraceInfo role="defect">
+                <locations>
+                  <LocInfo file="/home/nick/PycharmProjects/analyzer_comparison_v1/sa_comparison/projectTests/CSourceCode/testcases/jultst_files/jultst_two_overflows.c" line="7" spec="" info="main'" col="0"/>
+                  <LocInfo file="/home/nick/PycharmProjects/analyzer_comparison_v1/sa_comparison/projectTests/CSourceCode/testcases/jultst_files/jultst_two_overflows.c" line="9" spec="" info="DIVISION'" col="0"/>
+                </locations>
+              </RoleTraceInfo>
+            </traces>
+            <userAttributes class="tree-map">
+              <entry>
+                <string>.comment</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>.status</string>
+                <string>Default</string>
+              </entry>
+            </userAttributes>
+          </WarnInfoEx>
+
+          <WarnInfoEx id="1002" zRate="0.0">
+            <traces>
+              <RoleTraceInfo role="defect">
+                <locations>
+                  <LocInfo file="/home/nick/PycharmProjects/analyzer_comparison_v1/sa_comparison/projectTests/CSourceCode/testcases/jultst_files/jultst_two_overflows.c" line="1" spec="" info="DIVISION'" col="0"/>
+                </locations>
+              </RoleTraceInfo>
+            </traces>
+            <userAttributes class="tree-map">
+              <entry>
+                <string>.comment</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>.status</string>
+                <string>Default</string>
+              </entry>
+            </userAttributes>
+          </WarnInfoEx>
+
+            </warnings>
+      </SvResProjResultsEx>
+    </results>
+  </SvResResultsEx>
+</object-stream>
